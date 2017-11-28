@@ -28,7 +28,7 @@ namespace PrototypeCoopSim
         int currentPosY;
 
         //Game elements
-        const int elementListLength = 15;
+        const int elementListLength = 30;
         gameElement[] elementList = new gameElement[elementListLength];
 
         //Console variables
