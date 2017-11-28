@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.RenderLayer;
+using PrototypeCoopSim.Managers;
 
 namespace PrototypeCoopSim
 {
@@ -27,9 +28,14 @@ namespace PrototypeCoopSim
         int currentPosX;
         int currentPosY;
 
+        //Map
+        const int mapTilesX = 20;
+        const int mapTilesY = 24;
+        mapManager currentMap;
+
         //Game elements
         const int elementListLength = 30;
-        gameElement[] elementList = new gameElement[elementListLength];
+        //gameElement[] elementList = new gameElement[elementListLength];
 
         //Console variables
         String currentConsoleText;
@@ -53,12 +59,20 @@ namespace PrototypeCoopSim
             //Screen settings
             renderer.setScreenSize(graphics, 800, 600);
 
+            //Setup Map
+            currentMap = new mapManager(this, mapTilesX, mapTilesY);
+
             //Variable initialization
             //Generate trees
             Random random = new Random();
             for (int i = 0; i < elementListLength; i++)
             {
-                elementList[i] = new treeElement(this, random.Next() % 20, random.Next() % 20);
+                Vector2 randomTreePosition = new Vector2(random.Next() % 20, random.Next() % 24);
+                if (!currentMap.getOccupied(randomTreePosition))
+                {
+                    currentMap.setOccupied(randomTreePosition, true);
+                    currentMap.setOccupyingElement(randomTreePosition, new treeElement(this, (int)randomTreePosition.X, (int)randomTreePosition.Y));
+                }
             }
 
             base.Initialize();
@@ -112,27 +126,16 @@ namespace PrototypeCoopSim
             renderer.startDrawing();
 
             //Draw console
-            currentConsoleText = elementList[0].getDetails()
-                + Environment.NewLine + "MouseX:" + currentPosX
-                + Environment.NewLine + "MouseY:" + currentPosY;
+            //currentConsoleText = elementList[0].getDetails()
+            //    + Environment.NewLine + "MouseX:" + currentPosX
+            //    + Environment.NewLine + "MouseY:" + currentPosY;
+            currentConsoleText = "MouseX:" + currentPosX + Environment.NewLine + "MouseY:" + currentPosY;
             renderer.drawTexturedRectangle(500, 0, 300, 600, plainBlack);
             renderer.drawTexturedRectangle(505, 5, 290, 590, plainWhite);
             renderer.drawText(currentConsoleText, 510, 10, consoleFont);
 
-            //Draw map base
-            for (int mapUnitWidth = 0; mapUnitWidth < 20; mapUnitWidth++)
-            {
-                for (int mapUnitHeight = 0; mapUnitHeight < 24; mapUnitHeight++)
-                {
-                    renderer.drawTexturedRectangle(0 + (mapUnitWidth * 25), 0 + (mapUnitHeight * 25), 25, 25, brownTile);
-                }
-            }
-
-            //Random trees
-            for (int i = 0; i < elementListLength; i++)
-            {
-                elementList[i].draw(renderer);
-            }
+            //Draw map
+            currentMap.draw(renderer);
 
             //Heightlight mouse position
             if (currentPosX > 0 && currentPosX < 500 && currentPosY > 0 && currentPosY < 600)
