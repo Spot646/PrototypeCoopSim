@@ -73,6 +73,12 @@ namespace PrototypeCoopSim
                     currentMap.setOccupied(randomTreePosition, true);
                     currentMap.setOccupyingElement(randomTreePosition, new treeElement(this, (int)randomTreePosition.X, (int)randomTreePosition.Y));
                 }
+                Vector2 randomRockPosition = new Vector2(random.Next() % 20, random.Next() % 24);
+                if (!currentMap.getOccupied(randomRockPosition))
+                {
+                    currentMap.setOccupied(randomRockPosition, true);
+                    currentMap.setOccupyingElement(randomRockPosition, new RockElement(this, (int)randomRockPosition.X, (int)randomRockPosition.Y));
+                }
             }
 
             base.Initialize();

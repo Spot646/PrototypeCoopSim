@@ -44,6 +44,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Managers\mapManager.cs" />
     <Compile Include="Objects\gameElement.cs" />
+    <Compile Include="Objects\RockElement.cs" />
     <Compile Include="Objects\treeElement.cs" />
     <Compile Include="RenderLayer\Renderer.cs" />
     <Compile Include="Program.cs" />
