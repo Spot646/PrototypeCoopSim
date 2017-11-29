@@ -86,6 +86,16 @@ namespace PrototypeCoopSim.Managers
             return occupied[(int)focusTile.X + ((int)focusTile.Y * sizeX)];
         }
 
+        public int getNumberTilesX()
+        {
+            return sizeX;
+        }
+
+        public int getNumberTilesY()
+        {
+            return sizeY;
+        }
+
         public void setPassable(Vector2 focusTile, bool state)
         {
             passable[(int)focusTile.X + ((int)focusTile.Y * sizeX)] = state;

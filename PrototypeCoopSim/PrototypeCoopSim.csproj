@@ -41,7 +41,10 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\EventAddTrees.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\mapManager.cs" />
     <Compile Include="Objects\gameElement.cs" />
     <Compile Include="Objects\treeElement.cs" />

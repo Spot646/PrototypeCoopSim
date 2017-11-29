@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using PrototypeCoopSim.Events;
 using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.RenderLayer;
 using PrototypeCoopSim.Managers;
@@ -33,12 +34,18 @@ namespace PrototypeCoopSim
         const int mapTilesY = 24;
         mapManager currentMap;
 
+        //Events
+        EventManager eventManager;
+
         //Game elements
         const int elementListLength = 30;
         //gameElement[] elementList = new gameElement[elementListLength];
 
         //Console variables
         String currentConsoleText;
+
+        //Input keys
+        bool tKeyPressed = false;
 
         public Game1()
         {
@@ -62,18 +69,12 @@ namespace PrototypeCoopSim
             //Setup Map
             currentMap = new mapManager(this, mapTilesX, mapTilesY);
 
+            //Setup Events
+            eventManager = new EventManager(this, currentMap);
+
             //Variable initialization
             //Generate trees
-            Random random = new Random();
-            for (int i = 0; i < elementListLength; i++)
-            {
-                Vector2 randomTreePosition = new Vector2(random.Next() % 20, random.Next() % 24);
-                if (!currentMap.getOccupied(randomTreePosition))
-                {
-                    currentMap.setOccupied(randomTreePosition, true);
-                    currentMap.setOccupyingElement(randomTreePosition, new treeElement(this, (int)randomTreePosition.X, (int)randomTreePosition.Y));
-                }
-            }
+            eventManager.AddEvent(new EventAddTrees(this, currentMap, 15));
 
             base.Initialize();
         }
@@ -107,13 +108,27 @@ namespace PrototypeCoopSim
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //Check for key presses
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
                 Exit();
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.T))
+            {
+                tKeyPressed = true;
+            }
+            if (Keyboard.GetState().IsKeyUp(Keys.T) && tKeyPressed) { 
+                eventManager.AddEvent(new EventAddTrees(this, currentMap, 1));
+                tKeyPressed = false;
+            }
 
             //Check mouse functions
             MouseState mouseState = Mouse.GetState();
             currentPosX = mouseState.X;
             currentPosY = mouseState.Y;
+
+            //Run events
+            eventManager.RunEvents();
             
             base.Update(gameTime);
         }
