@@ -132,10 +132,20 @@ namespace PrototypeCoopSim
             renderer.startDrawing();
 
             //Draw console
-            //currentConsoleText = elementList[0].getDetails()
-            //    + Environment.NewLine + "MouseX:" + currentPosX
-            //    + Environment.NewLine + "MouseY:" + currentPosY;
-            currentConsoleText = "MouseX:" + currentPosX + Environment.NewLine + "MouseY:" + currentPosY;
+            //Find current mouse focus
+            Vector2 mouseCurrentTile = currentMap.getTileFromMousePosition(currentPosX, currentPosY, 25, 0, 0, 500, 600);
+
+            if (currentMap.getOccupied(mouseCurrentTile))
+            {
+                currentConsoleText = currentMap.getOccupyingElement(mouseCurrentTile).getDetails()
+                    + Environment.NewLine + "MouseX:" + currentPosX
+                    + Environment.NewLine + "MouseY:" + currentPosY;
+            }
+            else
+            {
+                currentConsoleText = "MouseX:" + currentPosX
+                    + Environment.NewLine + "MouseY:" + currentPosY;
+            }
             renderer.drawTexturedRectangle(500, 0, 300, 600, plainBlack);
             renderer.drawTexturedRectangle(505, 5, 290, 590, plainWhite);
             renderer.drawText(currentConsoleText, 510, 10, consoleFont);
@@ -146,9 +156,10 @@ namespace PrototypeCoopSim
             //Heightlight mouse position
             if (currentPosX > 0 && currentPosX < 500 && currentPosY > 0 && currentPosY < 600)
             {
-                int focusPosX = (int)(currentPosX / 25);
-                int focusPosY = (int)(currentPosY / 25);
-                renderer.drawTexturedRectangle(focusPosX * 25, focusPosY * 25, 25, 25, focus);
+                
+                //int focusPosX = (int)(currentPosX / 25);
+                //int focusPosY = (int)(currentPosY / 25);
+                renderer.drawTexturedRectangle((int)mouseCurrentTile.X * 25, (int)mouseCurrentTile.Y * 25, 25, 25, focus);
             }
 
             renderer.endDrawing();
