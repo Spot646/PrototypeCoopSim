@@ -65,8 +65,8 @@ namespace PrototypeCoopSim.Managers
 
             if(mouseX > mapOriginX && mouseX < (mapOriginX + mapWindowSizeX) && mouseY > mapOriginY && mouseY < (mapOriginY + mapWindowSizeY))
             {
-                mouseTilePosition.X = ((int)(((int)(mouseX + scanX - mapOriginX))/tileWidth)) * tileWidth;
-                mouseTilePosition.Y = ((int)(((int)(mouseY + scanY - mapOriginY))/tileWidth)) * tileWidth;
+                mouseTilePosition.X = ((int)(((int)(mouseX + scanX - mapOriginX)) / tileWidth));// * tileWidth;
+                mouseTilePosition.Y = ((int)(((int)(mouseY + scanY - mapOriginY)) / tileWidth));// * tileWidth;
             }
             else
             {
