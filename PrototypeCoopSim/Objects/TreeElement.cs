@@ -14,6 +14,9 @@ namespace PrototypeCoopSim.Objects
         public treeElement(Game game, int worldPositionXIn, int worldPositionYIn) : base(game, worldPositionXIn, worldPositionYIn)
         {
             elementName = "Tree";
+            maxHealth = 100;
+            currentHealth = 100;
+            yield = (age * 2) + 1;
             texture = game.Content.Load<Texture2D>("Tree1");
         }
         
