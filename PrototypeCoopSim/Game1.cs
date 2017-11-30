@@ -127,6 +127,11 @@ namespace PrototypeCoopSim
             currentPosX = mouseState.X;
             currentPosY = mouseState.Y;
 
+            Vector2 mouseCurrentTile = currentMap.getTileFromMousePosition(currentPosX, currentPosY, 25, 0, 0, 500, 600);
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                currentMap.getOccupyingElement(mouseCurrentTile).UpdateCurrentHealth(5);
+            }
             //Run events
             eventManager.RunEvents();
             
