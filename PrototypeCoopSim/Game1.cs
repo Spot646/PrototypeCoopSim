@@ -47,6 +47,9 @@ namespace PrototypeCoopSim
         //Input keys
         bool tKeyPressed = false;
 
+        //Mouse buttons
+        bool leftButtonPressed = false;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -75,6 +78,7 @@ namespace PrototypeCoopSim
             //Variable initialization
             //Generate trees
             eventManager.AddEvent(new EventAddTrees(this, currentMap, 15));
+            eventManager.AddEvent(new EventAddRocks(this, currentMap, 15));
 
             base.Initialize();
         }
@@ -130,7 +134,12 @@ namespace PrototypeCoopSim
             Vector2 mouseCurrentTile = currentMap.getTileFromMousePosition(currentPosX, currentPosY, 25, 0, 0, 500, 600);
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
+                leftButtonPressed = true;
+            }
+            if (mouseState.LeftButton == ButtonState.Released && leftButtonPressed)
+            {
                 currentMap.getOccupyingElement(mouseCurrentTile).UpdateCurrentHealth(5);
+                leftButtonPressed = false;
             }
             //Run events
             eventManager.RunEvents();

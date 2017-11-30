@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\EventAddRock.cs" />
     <Compile Include="Events\EventAddTrees.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Managers\EventManager.cs" />
