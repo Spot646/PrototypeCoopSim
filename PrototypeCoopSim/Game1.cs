@@ -33,6 +33,9 @@ namespace PrototypeCoopSim
         //Game elements
         const int elementListLength = 30;
 
+        //Track focus
+        gameElement currentElementFocus;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -64,7 +67,10 @@ namespace PrototypeCoopSim
             uiManager = new UIManager(this, renderer);
 
             //Setup Input
-            inputManager = new InputManager();
+            inputManager = new InputManager(currentMap);
+
+            //Manage focus
+            currentElementFocus = null;
 
             //Variable initialization
             //////////////////////////////////////////////////////////////
@@ -105,6 +111,11 @@ namespace PrototypeCoopSim
                 if (currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap)))
                 {
                     currentMap.getOccupyingElement(inputManager.GetCurrentMouseTile(currentMap)).UpdateCurrentHealth(5);
+                    currentElementFocus = currentMap.getOccupyingElement(inputManager.GetCurrentMouseTile(currentMap));
+                }
+                else
+                {
+                    currentElementFocus = null;
                 }
             }
 
@@ -131,9 +142,23 @@ namespace PrototypeCoopSim
 
             //Draw map
             currentMap.draw(renderer);
-            
-            //Heightlight mouse position
-            if (inputManager.MouseOverMap()) uiManager.DrawMouseFocus(inputManager.GetCurrentMouseTile(currentMap)); 
+
+            //Drag drawing
+            if (inputManager.DragStarted())
+            {
+                uiManager.DrawCurrentDrag(inputManager.GetMouseDragStartTile(), inputManager.GetCurrentMouseTile(currentMap));
+            }
+            else
+            {
+                //Heighlight mouse position
+                if (inputManager.MouseOverMap()) uiManager.DrawMouseFocus(inputManager.GetCurrentMouseTile(currentMap));
+            }
+
+            //Heighlight focus
+            if(currentElementFocus != null)
+            {
+                uiManager.DrawCurrentObjectFocus(currentElementFocus);
+            }
 
             renderer.endDrawing();
 
