@@ -11,11 +11,13 @@ namespace PrototypeCoopSim.Events
 {
     class Event
     {
+        Event callingEvent = null;
         private String eventName;
-        private bool active;
+        bool completed = false;
+        private bool active = true;
 
         public Event (){
-
+            
         }
 
         public void SetEventName(String eventNameIn)
@@ -23,9 +25,20 @@ namespace PrototypeCoopSim.Events
             eventName = eventNameIn;
         }
 
-        public void Suspend(bool state)
+        public void Suspend(Event completionEventIn)
         {
-            active = !state;
+            active = false;
+            completionEventIn.setCallingEvent(this);
+        }
+
+        public void setCallingEvent(Event callingEventIn)
+        {
+            callingEvent = callingEventIn;
+        }
+
+        public void Activate()
+        {
+            active = true;
         }
 
         public bool IsActive()
@@ -33,12 +46,21 @@ namespace PrototypeCoopSim.Events
             return active;
         }
 
-        public virtual bool HasEnded()
+        public void SetComplete()
         {
-            return true;
+            completed = true;
+        }
+
+        public bool HasEnded()
+        {
+            if (completed && callingEvent != null)
+            {
+                callingEvent.Activate();
+            }
+            return completed;
         }
             
-        public virtual void RunEvent()
+        public virtual void RunEvent(EventManager callingEventManager)
         {
 
         }

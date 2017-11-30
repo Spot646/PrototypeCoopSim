@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\EventAddTrees.cs" />
+    <Compile Include="Events\EventGenerateWorld.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\mapManager.cs" />

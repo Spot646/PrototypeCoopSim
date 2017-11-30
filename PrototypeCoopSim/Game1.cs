@@ -39,7 +39,6 @@ namespace PrototypeCoopSim
 
         //Game elements
         const int elementListLength = 30;
-        //gameElement[] elementList = new gameElement[elementListLength];
 
         //Console variables
         String currentConsoleText;
@@ -74,7 +73,8 @@ namespace PrototypeCoopSim
 
             //Variable initialization
             //Generate trees
-            eventManager.AddEvent(new EventAddTrees(this, currentMap, 15));
+            eventManager.AddEvent(new EventGenerateWorld(this, currentMap, 15, 20));
+            //eventManager.AddEvent(new EventAddTrees(this, currentMap, 15));
 
             base.Initialize();
         }
@@ -87,7 +87,6 @@ namespace PrototypeCoopSim
             renderer.initializeGraphics(this, graphics);
             
             //Load textures
-            brownTile = Content.Load<Texture2D>("Browntile");
             plainBlack = Content.Load<Texture2D>("PlainBlack");
             plainWhite = Content.Load<Texture2D>("PlainWhite");
             focus = Content.Load<Texture2D>("Focus");
@@ -165,9 +164,6 @@ namespace PrototypeCoopSim
             //Heightlight mouse position
             if (currentPosX > 0 && currentPosX < 500 && currentPosY > 0 && currentPosY < 600)
             {
-                
-                //int focusPosX = (int)(currentPosX / 25);
-                //int focusPosY = (int)(currentPosY / 25);
                 renderer.drawTexturedRectangle((int)mouseCurrentTile.X * 25, (int)mouseCurrentTile.Y * 25, 25, 25, focus);
             }
 

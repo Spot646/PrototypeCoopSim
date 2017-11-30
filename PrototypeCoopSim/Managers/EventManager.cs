@@ -34,7 +34,10 @@ namespace PrototypeCoopSim.Managers
             {
                 for (int i = 0; i < eventList.Count; i++)
                 {
-                    eventList[i].RunEvent();
+                    if (eventList[i].IsActive())
+                    {
+                        eventList[i].RunEvent(this);
+                    }
                 }
 
                 //Delete complteed events
