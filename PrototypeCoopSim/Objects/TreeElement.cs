@@ -19,7 +19,12 @@ namespace PrototypeCoopSim.Objects
             yield = (age * 2) + 1;
             texture = game.Content.Load<Texture2D>("Tree1");
         }
-        
+
+        public override int UpdateCurrentHealth(int damage)
+        {
+            damage = 10;
+            return base.UpdateCurrentHealth(damage);
+        }
         override public void draw(Renderer renderer)
         {
             renderer.drawTexturedRectangle(0 + (this.getWorldPositionX() * 25), 0 + (this.getWorldPositionY() * 25), 25, 25, this.texture);

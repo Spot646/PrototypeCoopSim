@@ -44,6 +44,11 @@ namespace PrototypeCoopSim.Objects
             return worldPositionY;
         }
 
+        public virtual int UpdateCurrentHealth(int damage)
+        {
+            return currentHealth = currentHealth - damage;
+        }
+
         public virtual void draw(Renderer renderer)
         {
         }

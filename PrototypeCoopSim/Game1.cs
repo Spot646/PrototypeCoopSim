@@ -83,7 +83,7 @@ namespace PrototypeCoopSim
 
             base.Initialize();
         }
-
+     
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         protected override void LoadContent()
@@ -120,9 +120,21 @@ namespace PrototypeCoopSim
             MouseState mouseState = Mouse.GetState();
             currentPosX = mouseState.X;
             currentPosY = mouseState.Y;
-            
+
+            Vector2 currentMousePosition = new Vector2(currentPosX, currentPosY);
+            //if (mouseState.LeftButton.Equals(1))
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                if (currentMap.getOccupied(currentMousePosition))
+                {
+                    currentMap.getOccupyingElement(currentMousePosition).currentHealth = currentMap.getOccupyingElement(currentMousePosition).UpdateCurrentHealth(5);
+                    currentConsoleText = currentMap.getOccupyingElement(currentMousePosition).getDetails();
+                }
+            }
+
             base.Update(gameTime);
         }
+        
 
         /// This is called when the game should draw itself.
         /// <param name="gameTime">Provides a snapshot of timing values.</param>

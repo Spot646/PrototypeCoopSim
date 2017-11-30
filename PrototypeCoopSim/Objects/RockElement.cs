@@ -19,7 +19,13 @@ namespace PrototypeCoopSim.Objects
             yield = 25;
             texture = game.Content.Load<Texture2D>("rock1");
         }
-        
+
+        public override int UpdateCurrentHealth(int damage)
+        {
+            damage = 25;
+            return base.UpdateCurrentHealth(damage);
+        }
+
         override public void draw(Renderer renderer)
         {
             renderer.drawTexturedRectangle(0 + (getWorldPositionX() * 25), 0 + (getWorldPositionY() * 25), 25, 25, texture);
