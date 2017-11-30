@@ -12,7 +12,6 @@ namespace PrototypeCoopSim.Events
     class EventAddRocks : Event
     {
         int numberOfRocks;
-        bool completed;
         mapManager associatedMap;
         Game associatedGame;
 
@@ -20,17 +19,11 @@ namespace PrototypeCoopSim.Events
         {
             this.SetEventName("Add Rocks");
             numberOfRocks = numberOfRocksIn;
-            completed = false;
             associatedMap = mapIn;
             associatedGame = gameIn;
         }
 
-        override public bool HasEnded()
-        {
-            return completed;
-        }
-
-        public override void RunEvent()
+        public override void RunEvent(EventManager callingEventManager)
         {
             Random random = new Random();
             Vector2 randomRockPosition = new Vector2(random.Next() % associatedMap.getNumberTilesX(), random.Next() % associatedMap.getNumberTilesY());
@@ -43,7 +36,7 @@ namespace PrototypeCoopSim.Events
 
             if(numberOfRocks <= 0)
             {
-                completed = true;
+                this.SetComplete();
             }
         }
     }

@@ -32,13 +32,19 @@ namespace PrototypeCoopSim.Events
 
         public override void RunEvent(EventManager callingEventManager)
         {
-            rocksCreated = true;
             if (!treesCreated)
             {
                 Event treeEvent = new EventAddTrees(associatedGame, associatedMap, numberTrees);
                 callingEventManager.AddEvent(treeEvent);
                 this.Suspend(treeEvent);
                 treesCreated = true;
+            }
+            if (!rocksCreated)
+            {
+                Event rockEvent = new EventAddRocks(associatedGame, associatedMap, numberRocks);
+                callingEventManager.AddEvent(rockEvent);
+                this.Suspend(rockEvent);
+                rocksCreated = true;
             }
             if (treesCreated && rocksCreated)
             {

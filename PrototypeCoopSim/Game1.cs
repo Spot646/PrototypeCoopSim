@@ -16,19 +16,6 @@ namespace PrototypeCoopSim
         GraphicsDeviceManager graphics;
         Renderer renderer;
 
-        //Textures
-        Texture2D brownTile;
-        Texture2D plainWhite;
-        Texture2D plainBlack;
-        Texture2D focus;
-
-        //Fonts
-        SpriteFont consoleFont;
-
-        //Focus info
-        int currentPosX;
-        int currentPosY;
-
         //Map
         const int mapTilesX = 20;
         const int mapTilesY = 24;
@@ -37,17 +24,14 @@ namespace PrototypeCoopSim
         //Events
         EventManager eventManager;
 
+        //UI
+        UIManager uiManager;
+
+        //Input
+        InputManager inputManager;
+
         //Game elements
         const int elementListLength = 30;
-
-        //Console variables
-        String currentConsoleText;
-
-        //Input keys
-        bool tKeyPressed = false;
-
-        //Mouse buttons
-        bool leftButtonPressed = false;
 
         public Game1()
         {
@@ -61,12 +45,14 @@ namespace PrototypeCoopSim
         /// and initialize them as well.
         protected override void Initialize()
         {
+            //Define Systems
+            ///////////////////////////////////////////////////////////////
             //Define the render layer
             renderer = new Renderer();
-            this.IsMouseVisible = true;
 
             //Screen settings
             renderer.setScreenSize(graphics, 800, 600);
+            this.IsMouseVisible = true;
 
             //Setup Map
             currentMap = new mapManager(this, mapTilesX, mapTilesY);
@@ -74,9 +60,16 @@ namespace PrototypeCoopSim
             //Setup Events
             eventManager = new EventManager(this, currentMap);
 
+            //Setup UI
+            uiManager = new UIManager(this, renderer);
+
+            //Setup Input
+            inputManager = new InputManager();
+
             //Variable initialization
-            //Generate trees
-            eventManager.AddEvent(new EventAddTrees(this, currentMap, 15));
+            //////////////////////////////////////////////////////////////
+            //Generate map
+            eventManager.AddEvent(new EventGenerateWorld(this, currentMap, 15,5));
 
             base.Initialize();
         }
@@ -87,57 +80,34 @@ namespace PrototypeCoopSim
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             renderer.initializeGraphics(this, graphics);
-            
-            //Load textures
-            plainBlack = Content.Load<Texture2D>("PlainBlack");
-            plainWhite = Content.Load<Texture2D>("PlainWhite");
-            focus = Content.Load<Texture2D>("Focus");
-
-            //Load fonts
-            consoleFont = Content.Load<SpriteFont>("ConsoleText");
         }
 
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.
-        protected override void UnloadContent()
-        {
-            // TODO: Unload any non ContentManager content here
-        }
+        protected override void UnloadContent() { }
 
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //Update key presses
+            inputManager.Update();
+
             //Check for key presses
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            {
-                Exit();
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.T))
-            {
-                tKeyPressed = true;
-            }
-            if (Keyboard.GetState().IsKeyUp(Keys.T) && tKeyPressed) { 
-                eventManager.AddEvent(new EventAddTrees(this, currentMap, 1));
-                tKeyPressed = false;
-            }
+            if (inputManager.EscapeButtonPressed()) Exit();
+            if (inputManager.SpawnTreeButtonReleased()) eventManager.AddEvent(new EventAddTrees(this, currentMap, 1));
+            if (inputManager.SpawnRockButtonReleased()) eventManager.AddEvent(new EventAddRocks(this, currentMap, 1));
 
             //Check mouse functions
-            MouseState mouseState = Mouse.GetState();
-            currentPosX = mouseState.X;
-            currentPosY = mouseState.Y;
+            if (inputManager.LeftMouseButtonReleased())
+            {
+                if (currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap)))
+                {
+                    currentMap.getOccupyingElement(inputManager.GetCurrentMouseTile(currentMap)).UpdateCurrentHealth(5);
+                }
+            }
 
-            Vector2 mouseCurrentTile = currentMap.getTileFromMousePosition(currentPosX, currentPosY, 25, 0, 0, 500, 600);
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                leftButtonPressed = true;
-            }
-            if (mouseState.LeftButton == ButtonState.Released && leftButtonPressed)
-            {
-                currentMap.getOccupyingElement(mouseCurrentTile).UpdateCurrentHealth(5);
-                leftButtonPressed = false;
-            }
             //Run events
             eventManager.RunEvents();
             
@@ -152,32 +122,18 @@ namespace PrototypeCoopSim
             renderer.startDrawing();
 
             //Draw console
-            //Find current mouse focus
-            Vector2 mouseCurrentTile = currentMap.getTileFromMousePosition(currentPosX, currentPosY, 25, 0, 0, 500, 600);
+            if (currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap))){
+                uiManager.updateConsole(currentMap.getOccupyingElement(inputManager.GetCurrentMouseTile(currentMap)).getDetails());}
+            else { uiManager.updateConsole(""); }
 
-            if (currentMap.getOccupied(mouseCurrentTile))
-            {
-                currentConsoleText = currentMap.getOccupyingElement(mouseCurrentTile).getDetails()
-                    + Environment.NewLine + "MouseX:" + currentPosX
-                    + Environment.NewLine + "MouseY:" + currentPosY;
-            }
-            else
-            {
-                currentConsoleText = "MouseX:" + currentPosX
-                    + Environment.NewLine + "MouseY:" + currentPosY;
-            }
-            renderer.drawTexturedRectangle(500, 0, 300, 600, plainBlack);
-            renderer.drawTexturedRectangle(505, 5, 290, 590, plainWhite);
-            renderer.drawText(currentConsoleText, 510, 10, consoleFont);
+            //Draw Console
+            uiManager.DrawConsole();
 
             //Draw map
             currentMap.draw(renderer);
-
+            
             //Heightlight mouse position
-            if (currentPosX > 0 && currentPosX < 500 && currentPosY > 0 && currentPosY < 600)
-            {
-                renderer.drawTexturedRectangle((int)mouseCurrentTile.X * 25, (int)mouseCurrentTile.Y * 25, 25, 25, focus);
-            }
+            if (inputManager.MouseOverMap()) uiManager.DrawMouseFocus(inputManager.GetCurrentMouseTile(currentMap)); 
 
             renderer.endDrawing();
 
