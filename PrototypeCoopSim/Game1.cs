@@ -54,8 +54,14 @@ namespace PrototypeCoopSim
             //Define the render layer
             renderer = new Renderer();
 
+            //XNA Settings
+            //Choose one time step setting
+            this.TargetElapsedTime = TimeSpan.FromSeconds(1.0f / 300.0f); //Fixed time step
+            IsFixedTimeStep = false; //Variable
+
             //Screen settings
             renderer.setScreenSize(graphics, 800, 600);
+            
             this.IsMouseVisible = true;
 
             //Setup Map
@@ -76,6 +82,11 @@ namespace PrototypeCoopSim
             //Add testing character
             currentMap.setOccupied(new Vector2((int)currentMap.getNumberTilesX() / 2, (int)currentMap.getNumberTilesY() / 2), true);
             currentMap.setOccupyingElement(new Vector2((int)currentMap.getNumberTilesX() / 2, (int)currentMap.getNumberTilesY() / 2), new WorkerElement(this, (int)currentMap.getNumberTilesX() / 2, (int)currentMap.getNumberTilesY() / 2));
+            currentMap.setOccupied(new Vector2((int)currentMap.getNumberTilesX() / 2 + 1, (int)currentMap.getNumberTilesY() / 2), true);
+            currentMap.setOccupyingElement(new Vector2((int)currentMap.getNumberTilesX() / 2 + 1, (int)currentMap.getNumberTilesY() / 2), new WorkerElement(this, (int)currentMap.getNumberTilesX() / 2 + 1, (int)currentMap.getNumberTilesY() / 2));
+            currentMap.setOccupied(new Vector2((int)currentMap.getNumberTilesX() / 2 - 1, (int)currentMap.getNumberTilesY() / 2), true);
+            currentMap.setOccupyingElement(new Vector2((int)currentMap.getNumberTilesX() / 2 - 1, (int)currentMap.getNumberTilesY() / 2), new WorkerElement(this, (int)currentMap.getNumberTilesX() / 2 - 1, (int)currentMap.getNumberTilesY() / 2));
+
 
             //Variable initialization
             //////////////////////////////////////////////////////////////
@@ -110,7 +121,7 @@ namespace PrototypeCoopSim
             if (inputManager.SpawnTreeButtonReleased()) eventManager.AddEvent(new EventAddTrees(this, currentMap, 1));
             if (inputManager.SpawnRockButtonReleased()) eventManager.AddEvent(new EventAddRocks(this, currentMap, 1));
 
-            //Check mouse functions
+            //Check left mouse functions
             if (inputManager.LeftMouseButtonReleased())
             {
                 if (inputManager.DragFinished())
@@ -127,6 +138,35 @@ namespace PrototypeCoopSim
                 else
                 {
                     elementFocus.Clear();
+                }
+            }
+
+            //Check right mouse functions
+            if (inputManager.RightMouseButtonReleased())
+            {
+                //cycle through all focuses
+                for(int i = 0; i < elementFocus.Count; i++)
+                {
+                    if (elementFocus[i].GetMovable())
+                    {
+                        if (elementFocus[i].Moving())
+                        {
+                            elementFocus[i].KillLinkedMovement();
+                        }
+                        EventMoveTo movingEvent = new EventMoveTo(this, currentMap, elementFocus[i], inputManager.GetCurrentMouseTile(currentMap), gameTime);
+                        elementFocus[i].LinkToMoveEvent(movingEvent);
+                        eventManager.AddEvent(movingEvent);
+                    }
+                }
+
+                if(elementFocus.Count == 0)
+                {
+                    //if no focus, spawn new workers to test with
+                    if (!currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap)))
+                    {
+                        currentMap.setOccupied(inputManager.GetCurrentMouseTile(currentMap), true);
+                        currentMap.setOccupyingElement(inputManager.GetCurrentMouseTile(currentMap), new WorkerElement(this, (int)inputManager.GetCurrentMouseTile(currentMap).X, (int)inputManager.GetCurrentMouseTile(currentMap).Y));
+                    }
                 }
             }
 

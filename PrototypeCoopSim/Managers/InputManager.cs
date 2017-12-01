@@ -19,6 +19,8 @@ namespace PrototypeCoopSim.Managers
         private bool leftMouseReleased = false;
         private bool leftMouseDragStart = false;
         private bool leftMouseDragEnd = false;
+        private bool rightMousePressed = false;
+        private bool rightMouseReleased = false;
         private Vector2 mouseTileStartDrag;
         private Vector2 mouseTileEndDrag;
 
@@ -62,6 +64,7 @@ namespace PrototypeCoopSim.Managers
         {
             //Clear button release events
             leftMouseReleased = false;
+            rightMouseReleased = false;
             spawnTreeButtonReleased = false;
             spawnRockButtonReleased = false;
             escapeButtonReleased = false;
@@ -112,6 +115,8 @@ namespace PrototypeCoopSim.Managers
                     leftMousePressed = true;
                 }
 
+                if (Mouse.GetState().RightButton == ButtonState.Pressed) rightMousePressed = true;
+                
                 //Check for button down events
                 if (Keyboard.GetState().IsKeyDown(Keys.T)) spawnTreeButtonPressed = true;
                 if (Keyboard.GetState().IsKeyDown(Keys.R)) spawnRockButtonPressed = true;
@@ -142,6 +147,13 @@ namespace PrototypeCoopSim.Managers
                         mouseTileEndDrag.Y = 0;
                     }
                 }
+
+                if (Mouse.GetState().RightButton == ButtonState.Released && rightMousePressed)
+                {
+                    rightMousePressed = false;
+                    rightMouseReleased = true;
+                }
+
                 if (Keyboard.GetState().IsKeyUp(Keys.T) && spawnTreeButtonPressed) { spawnTreeButtonPressed = false; spawnTreeButtonReleased = true; }
                 if (Keyboard.GetState().IsKeyUp(Keys.R) && spawnRockButtonPressed) { spawnRockButtonPressed = false; spawnRockButtonReleased = true; }
                 if (Keyboard.GetState().IsKeyUp(Keys.Escape) && escapeButtonPressed) { escapeButtonPressed = false; escapeButtonReleased = true; }
@@ -173,6 +185,16 @@ namespace PrototypeCoopSim.Managers
         public bool LeftMouseButtonReleased()
         {
             return leftMouseReleased;
+        }
+
+        public bool RightMouseButtonPressed()
+        {
+            return rightMousePressed;
+        }
+
+        public bool RightMouseButtonReleased()
+        {
+            return rightMouseReleased;
         }
 
         public bool EscapeButtonPressed()

@@ -65,7 +65,7 @@ namespace PrototypeCoopSim.Managers
         }
 
         public void DrawCurrentObjectFocus(gameElement focusElement) {
-            associatedRenderer.drawTexturedRectangle(focusElement.getWorldPositionX() * 25, focusElement.getWorldPositionY() * 25, 25, 25, focus2);
+            associatedRenderer.drawTexturedRectangle((int)focusElement.GetAnimationOffset().X + focusElement.getWorldPositionX() * 25, (int)focusElement.GetAnimationOffset().Y + focusElement.getWorldPositionY() * 25, 25, 25, focus2);
         }
 
         public void DrawCurrentDrag(Vector2 startOfDragTile, Vector2 endOfDragTile)

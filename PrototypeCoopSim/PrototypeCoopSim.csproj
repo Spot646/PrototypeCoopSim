@@ -45,6 +45,7 @@
     <Compile Include="Events\EventAddRocks.cs" />
     <Compile Include="Events\EventAddTrees.cs" />
     <Compile Include="Events\EventGenerateWorld.cs" />
+    <Compile Include="Events\EventMoveTo.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\InputManager.cs" />

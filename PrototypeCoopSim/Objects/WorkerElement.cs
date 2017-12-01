@@ -17,6 +17,8 @@ namespace PrototypeCoopSim.Objects
             maxHealth = 300;
             currentHealth = 300;
             yield = 0;
+            this.SetSpeed(0.05f);
+            this.SetMovable(true);
             texture = game.Content.Load<Texture2D>("TestCharSprite");
         }
 
@@ -28,7 +30,7 @@ namespace PrototypeCoopSim.Objects
 
         override public void draw(Renderer renderer)
         {
-            renderer.drawTexturedRectangle(0 + (this.getWorldPositionX() * 25), 0 + (this.getWorldPositionY() * 25), 25, 25, this.texture);
+            renderer.drawTexturedRectangle((int)(GetAnimationOffset().X + (float)(this.getWorldPositionX() * 25)), (int)(this.GetAnimationOffset().Y + (float)(this.getWorldPositionY() * 25)), 25, 25, this.texture);
         }
     }
 }
