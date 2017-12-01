@@ -6,6 +6,7 @@ using PrototypeCoopSim.Events;
 using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.RenderLayer;
 using PrototypeCoopSim.Managers;
+using System.Collections.Generic;
 
 namespace PrototypeCoopSim
 {
@@ -34,7 +35,7 @@ namespace PrototypeCoopSim
         const int elementListLength = 30;
 
         //Track focus
-        gameElement currentElementFocus;
+        List<gameElement> elementFocus = new List<gameElement>();
 
         public Game1()
         {
@@ -70,7 +71,7 @@ namespace PrototypeCoopSim
             inputManager = new InputManager(currentMap);
 
             //Manage focus
-            currentElementFocus = null;
+            elementFocus.Clear();
 
             //Variable initialization
             //////////////////////////////////////////////////////////////
@@ -108,14 +109,20 @@ namespace PrototypeCoopSim
             //Check mouse functions
             if (inputManager.LeftMouseButtonReleased())
             {
-                if (currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap)))
+                if (inputManager.DragFinished())
+                {
+                    elementFocus.Clear();
+                    currentMap.GetAllElementsInArea(elementFocus, inputManager.GetMouseDragStartTile(), inputManager.GetMouseDragEndTile());
+                }
+                else if (currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap)))
                 {
                     currentMap.getOccupyingElement(inputManager.GetCurrentMouseTile(currentMap)).UpdateCurrentHealth(5);
-                    currentElementFocus = currentMap.getOccupyingElement(inputManager.GetCurrentMouseTile(currentMap));
+                    elementFocus.Clear();
+                    elementFocus.Add(currentMap.getOccupyingElement(inputManager.GetCurrentMouseTile(currentMap)));
                 }
                 else
                 {
-                    currentElementFocus = null;
+                    elementFocus.Clear();
                 }
             }
 
@@ -155,9 +162,10 @@ namespace PrototypeCoopSim
             }
 
             //Heighlight focus
-            if(currentElementFocus != null)
+            if(elementFocus.Count > 0)
             {
-                uiManager.DrawCurrentObjectFocus(currentElementFocus);
+                for(int i = 0; i < elementFocus.Count; i++)
+                uiManager.DrawCurrentObjectFocus(elementFocus[i]);
             }
 
             renderer.endDrawing();

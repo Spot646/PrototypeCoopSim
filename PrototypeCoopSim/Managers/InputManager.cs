@@ -14,6 +14,7 @@ namespace PrototypeCoopSim.Managers
         private mapManager associatedMap;
 
         //Left Mouse
+        private bool mouseLostFocus = true;
         private bool leftMousePressed = false;
         private bool leftMouseReleased = false;
         private bool leftMouseDragStart = false;
@@ -73,64 +74,85 @@ namespace PrototypeCoopSim.Managers
                 mouseTileEndDrag.Y = 0;
             }
 
-            //Check mouse down conditions
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+            if (!mouseLostFocus)
             {
-                //Start Drag
-                if (this.MouseOverMap())
+                //Check mouse down conditions
+                if (Mouse.GetState().LeftButton == ButtonState.Pressed)
                 {
-                    Vector2 currentMouseTile = associatedMap.getTileFromMousePosition(Mouse.GetState().X, Mouse.GetState().Y, 25, 0, 0, 500, 600);
-                    if (!leftMousePressed)
+                    //Start Drag
+                    if (this.MouseOverMap())
                     {
-                        mouseTileStartDrag = currentMouseTile;
+                        Vector2 currentMouseTile = associatedMap.getTileFromMousePosition(Mouse.GetState().X, Mouse.GetState().Y, 25, 0, 0, 500, 600);
+                        if (!leftMousePressed)
+                        {
+                            mouseTileStartDrag = currentMouseTile;
+                        }
+                        if (mouseTileStartDrag.X != currentMouseTile.X || mouseTileStartDrag.Y != currentMouseTile.Y)
+                        {
+                            leftMouseDragStart = true;
+                        }
+                        if (mouseTileStartDrag.X == currentMouseTile.X && mouseTileStartDrag.Y == currentMouseTile.Y)
+                        {
+                            leftMouseDragStart = false;
+                        }
                     }
-                    if(mouseTileStartDrag.X != currentMouseTile.X || mouseTileStartDrag.Y != currentMouseTile.Y)
+                    else
                     {
-                        leftMouseDragStart = true;
+                        mouseLostFocus = false;
+                        leftMouseDragStart = false;
+                        leftMouseDragEnd = false;
+                        mouseTileStartDrag.X = 0;
+                        mouseTileStartDrag.Y = 0;
+                        mouseTileEndDrag.X = 0;
+                        mouseTileEndDrag.Y = 0;
+                        mouseLostFocus = true;
                     }
-                    if (mouseTileStartDrag.X == currentMouseTile.X && mouseTileStartDrag.Y == currentMouseTile.Y)
+
+                    //Basic click
+                    leftMousePressed = true;
+                }
+
+                //Check for button down events
+                if (Keyboard.GetState().IsKeyDown(Keys.T)) spawnTreeButtonPressed = true;
+                if (Keyboard.GetState().IsKeyDown(Keys.R)) spawnRockButtonPressed = true;
+                if (Keyboard.GetState().IsKeyDown(Keys.Escape)) escapeButtonPressed = true;
+
+                //Check for button release events
+                if (Mouse.GetState().LeftButton == ButtonState.Released && leftMousePressed)
+                {
+                    leftMousePressed = false;
+                    leftMouseReleased = true;
+                    if (leftMouseDragStart && this.MouseOverMap())
                     {
+                        mouseTileEndDrag = associatedMap.getTileFromMousePosition(Mouse.GetState().X, Mouse.GetState().Y, 25, 0, 0, 500, 600);
+                        if (mouseTileStartDrag.X != mouseTileEndDrag.X || mouseTileStartDrag.Y != mouseTileEndDrag.Y)
+                        {
+                            leftMouseDragEnd = true;
+                        }
                         leftMouseDragStart = false;
                     }
-                }
-
-                //Basic click
-                leftMousePressed = true;
-            }
-
-            //Check for button down events
-            if (Keyboard.GetState().IsKeyDown(Keys.T)) spawnTreeButtonPressed = true;
-            if (Keyboard.GetState().IsKeyDown(Keys.R)) spawnRockButtonPressed = true;
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape)) escapeButtonPressed = true;
-
-            //Check for button release events
-            if (Mouse.GetState().LeftButton == ButtonState.Released && leftMousePressed)
-            {
-                leftMousePressed = false;
-                leftMouseReleased = true;
-                if (leftMouseDragStart && this.MouseOverMap())
-                {
-                    mouseTileEndDrag = associatedMap.getTileFromMousePosition(Mouse.GetState().X, Mouse.GetState().Y, 25, 0, 0, 500, 600);
-                    if (mouseTileStartDrag.X != mouseTileEndDrag.X || mouseTileStartDrag.Y != mouseTileEndDrag.Y)
+                    else
                     {
-                        leftMouseDragEnd = true;
+                        //clear out drag data
+                        leftMouseDragStart = false;
+                        leftMouseDragEnd = false;
+                        mouseTileStartDrag.X = 0;
+                        mouseTileStartDrag.Y = 0;
+                        mouseTileEndDrag.X = 0;
+                        mouseTileEndDrag.Y = 0;
                     }
-                    leftMouseDragStart = false;
                 }
-                else
+                if (Keyboard.GetState().IsKeyUp(Keys.T) && spawnTreeButtonPressed) { spawnTreeButtonPressed = false; spawnTreeButtonReleased = true; }
+                if (Keyboard.GetState().IsKeyUp(Keys.R) && spawnRockButtonPressed) { spawnRockButtonPressed = false; spawnRockButtonReleased = true; }
+                if (Keyboard.GetState().IsKeyUp(Keys.Escape) && escapeButtonPressed) { escapeButtonPressed = false; escapeButtonReleased = true; }
+            }
+            else
+            {
+                if(Mouse.GetState().LeftButton == ButtonState.Released)
                 {
-                    //clear out drag data
-                    leftMouseDragStart = false;
-                    leftMouseDragEnd = false;
-                    mouseTileStartDrag.X = 0;
-                    mouseTileStartDrag.Y = 0;
-                    mouseTileEndDrag.X = 0;
-                    mouseTileEndDrag.Y = 0;
+                    mouseLostFocus = false;
                 }
             }
-            if (Keyboard.GetState().IsKeyUp(Keys.T) && spawnTreeButtonPressed) { spawnTreeButtonPressed = false; spawnTreeButtonReleased = true; }
-            if (Keyboard.GetState().IsKeyUp(Keys.R) && spawnRockButtonPressed) { spawnRockButtonPressed = false; spawnRockButtonReleased = true; }
-            if (Keyboard.GetState().IsKeyUp(Keys.Escape) && escapeButtonPressed) { escapeButtonPressed = false; escapeButtonReleased = true; }
         }
 
         public bool SpawnTreeButtonReleased()
