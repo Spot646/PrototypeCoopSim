@@ -73,6 +73,10 @@ namespace PrototypeCoopSim
             //Manage focus
             elementFocus.Clear();
 
+            //Add testing character
+            currentMap.setOccupied(new Vector2((int)currentMap.getNumberTilesX() / 2, (int)currentMap.getNumberTilesY() / 2), true);
+            currentMap.setOccupyingElement(new Vector2((int)currentMap.getNumberTilesX() / 2, (int)currentMap.getNumberTilesY() / 2), new WorkerElement(this, (int)currentMap.getNumberTilesX() / 2, (int)currentMap.getNumberTilesY() / 2));
+
             //Variable initialization
             //////////////////////////////////////////////////////////////
             //Generate map
