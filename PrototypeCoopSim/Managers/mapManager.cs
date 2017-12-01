@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using System;
 using PrototypeCoopSim.Objects;
@@ -120,6 +121,47 @@ namespace PrototypeCoopSim.Managers
             else
             {
                 return null;
+            }
+        }
+
+        public void GetAllElementsInArea(List<gameElement> listIn, Vector2 startDrag, Vector2 endDrag)
+        {
+            int startingX;
+            int startingY;
+            int endingX;
+            int endingY;
+
+            if(startDrag.X > endDrag.X)
+            {
+                startingX = (int)endDrag.X;
+                endingX = (int)startDrag.X;
+            }
+            else
+            {
+                startingX = (int)startDrag.X;
+                endingX = (int)endDrag.X;
+            }
+
+            if (startDrag.Y > endDrag.Y)
+            {
+                startingY = (int)endDrag.Y;
+                endingY = (int)startDrag.Y;
+            }
+            else
+            {
+                startingY = (int)startDrag.Y;
+                endingY = (int)endDrag.Y;
+            }
+
+            for(int x = startingX; x < endingX + 1; x++)
+            {
+                for(int y =startingY; y < endingY + 1; y++)
+                {
+                    if(this.getOccupied(new Vector2(x, y)))
+                    {
+                        listIn.Add(this.getOccupyingElement(new Vector2(x, y)));
+                    }
+                }
             }
         }
 

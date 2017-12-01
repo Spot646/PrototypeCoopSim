@@ -46,6 +46,7 @@
     <Compile Include="Events\EventAddRocks.cs" />
     <Compile Include="Events\EventAddTrees.cs" />
     <Compile Include="Events\EventGenerateWorld.cs" />
+    <Compile Include="Events\EventMoveTo.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Managers\InputManager.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Objects\gameElement.cs" />
     <Compile Include="Objects\RockElement.cs" />
     <Compile Include="Objects\treeElement.cs" />
+    <Compile Include="Objects\WorkerElement.cs" />
     <Compile Include="RenderLayer\Renderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

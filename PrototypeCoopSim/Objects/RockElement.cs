@@ -17,6 +17,7 @@ namespace PrototypeCoopSim.Objects
             maxHealth = 250;
             currentHealth = 250;
             yield = 25;
+            this.SetMovable(false);
             texture = game.Content.Load<Texture2D>("rock1");
         }
 

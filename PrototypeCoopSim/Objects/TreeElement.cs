@@ -17,6 +17,7 @@ namespace PrototypeCoopSim.Objects
             maxHealth = 100;
             currentHealth = 100;
             yield = (age * 2) + 1;
+            this.SetMovable(false);
             texture = game.Content.Load<Texture2D>("Tree1");
         }
 
