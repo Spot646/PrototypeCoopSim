@@ -47,6 +47,23 @@ namespace PrototypeCoopSim.Managers
             return mapIn.getTileFromMousePosition(mouseState.X, mouseState.Y, 25, 0, 0, 500, 600);
         }
 
+        public bool MouseOverCircle(Vector2 position, float radius)
+        {
+            MouseState mouseState = Mouse.GetState();
+            double x = (double)Math.Abs(position.X - mouseState.X);
+            double y = (double)Math.Abs(position.Y - mouseState.Y);
+            double distance = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
+
+            if (distance <= radius)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public bool MouseOverMap()
         {
             MouseState mouseState = Mouse.GetState();

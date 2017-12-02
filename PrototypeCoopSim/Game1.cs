@@ -135,6 +135,16 @@ namespace PrototypeCoopSim
                     elementFocus.Clear();
                     elementFocus.Add(currentMap.getOccupyingElement(inputManager.GetCurrentMouseTile(currentMap)));
                 }
+                else if (uiManager.OverHarvestIcon(inputManager) && elementFocus.Count > 0)
+                {
+                    for(int i = 0; i < elementFocus.Count; i++)
+                    {
+                        if (elementFocus[i].GetMovable())
+                        {
+                            eventManager.AddEvent(new EventHarvestTrees(this, currentMap, eventManager, elementFocus[i], gameTime, true));
+                        }
+                    }
+                }
                 else
                 {
                     elementFocus.Clear();
@@ -184,12 +194,16 @@ namespace PrototypeCoopSim
             renderer.startDrawing();
 
             //Draw console
-            if (currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap))){
-                uiManager.updateConsole(currentMap.getOccupyingElement(inputManager.GetCurrentMouseTile(currentMap)).getDetails());}
+            if (currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap))) {
+                uiManager.updateConsole(currentMap.getOccupyingElement(inputManager.GetCurrentMouseTile(currentMap)).getDetails()); }
             else { uiManager.updateConsole(""); }
 
             //Draw Console
             uiManager.DrawConsole();
+            if (elementFocus.Count > 0)
+            { 
+                uiManager.DrawCurrentFocusActionIcons(elementFocus[0], inputManager);
+            }
 
             //Draw map
             currentMap.draw(renderer);

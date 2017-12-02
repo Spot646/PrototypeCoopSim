@@ -25,9 +25,16 @@ namespace PrototypeCoopSim.Managers
         Texture2D focus;
         Texture2D focus2;
         Texture2D focus3;
+        Texture2D harvestIcon;
+        Texture2D iconFocus;
 
         //Fonts
         SpriteFont consoleFont;
+
+        //icon positions
+        const int harvestIconX = 540;
+        const int harvestIconY = 440;
+        const int harvestIconDiameter = 50;
 
         public UIManager(Game gameIn, Renderer rendererIn)
         {
@@ -42,6 +49,8 @@ namespace PrototypeCoopSim.Managers
             focus = associatedGame.Content.Load<Texture2D>("Focus");
             focus2 = associatedGame.Content.Load<Texture2D>("Focus2");
             focus3 = associatedGame.Content.Load<Texture2D>("Focus3");
+            harvestIcon = associatedGame.Content.Load<Texture2D>("HarvestTreesIcon");
+            iconFocus = associatedGame.Content.Load<Texture2D>("CircleIconHeighlight");
 
             //Load fonts
             consoleFont = associatedGame.Content.Load<SpriteFont>("ConsoleText");
@@ -54,8 +63,10 @@ namespace PrototypeCoopSim.Managers
 
         public void DrawConsole()
         {
-            associatedRenderer.drawTexturedRectangle(500, 0, 300, 600, plainBlack);
-            associatedRenderer.drawTexturedRectangle(505, 5, 290, 590, plainWhite);
+            associatedRenderer.drawTexturedRectangle(500, 0, 300, 400, plainBlack);
+            associatedRenderer.drawTexturedRectangle(505, 5, 290, 390, plainWhite);
+            associatedRenderer.drawTexturedRectangle(500, 400, 300, 200, plainBlack);
+            associatedRenderer.drawTexturedRectangle(505, 405, 290, 190, plainWhite);
             associatedRenderer.drawText(currentConsoleText, 510, 10, consoleFont);
         }
 
@@ -67,6 +78,38 @@ namespace PrototypeCoopSim.Managers
         public void DrawCurrentObjectFocus(gameElement focusElement) {
             associatedRenderer.drawTexturedRectangle((int)focusElement.GetAnimationOffset().X + focusElement.getWorldPositionX() * 25, (int)focusElement.GetAnimationOffset().Y + focusElement.getWorldPositionY() * 25, 25, 25, focus2);
         }
+
+        public void DrawCurrentFocusActionIcons(gameElement focusElement, InputManager inputManager)
+        {
+            //No icons
+            if (focusElement.GetIconTypes() == 0)
+            {
+                
+            }
+            //Harvest icon
+            if (focusElement.GetIconTypes() == 1)
+            {
+                associatedRenderer.drawTexturedRectangle(harvestIconX - (harvestIconDiameter / 2), harvestIconY - (harvestIconDiameter / 2), harvestIconDiameter, harvestIconDiameter, harvestIcon);
+                //check for focus
+                if(this.OverHarvestIcon(inputManager))
+                {
+                    associatedRenderer.drawTexturedRectangle(harvestIconX - (harvestIconDiameter / 2), harvestIconY - (harvestIconDiameter / 2), harvestIconDiameter, harvestIconDiameter, iconFocus);
+                }
+            }
+        }
+
+       public bool OverHarvestIcon(InputManager inputManager)
+        {
+            if(inputManager.MouseOverCircle(new Vector2(harvestIconX, harvestIconY), harvestIconDiameter / 2))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
         public void DrawCurrentDrag(Vector2 startOfDragTile, Vector2 endOfDragTile)
         {

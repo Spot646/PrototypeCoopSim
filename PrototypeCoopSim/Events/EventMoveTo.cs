@@ -183,6 +183,7 @@ namespace PrototypeCoopSim.Events
                         bool attemptPush = false;
                         elementToMove.SetStatusMessage("Someone is in my spot!");
                         //Try to push them
+                        //TODO fix out of range on push
                         if (associatedMap.getOccupyingElement(new Vector2(currentPath[1].X, currentPath[1].Y)).Idle())
                         {
                             Vector2 safeSpotToPush = new Vector2(-1, -1);
@@ -284,7 +285,7 @@ namespace PrototypeCoopSim.Events
             if(nodeList.Count == 0)
             {
                 //seed list
-                elementToMove.SetStatusMessage("Looking for path");
+                //elementToMove.SetStatusMessage("Looking for path");
                 MapNode newNode;
                 newNode.nodeLocation = new Vector2(elementToMove.getWorldPositionX(), elementToMove.getWorldPositionY());
                 newNode.nodePreviousLocation = new Vector2(elementToMove.getWorldPositionX(), elementToMove.getWorldPositionY());
@@ -299,7 +300,7 @@ namespace PrototypeCoopSim.Events
                 {
                     //No further nodes to check, end search
                     noPathExists = true;
-                    elementToMove.SetStatusMessage("I can't get there!");
+                    elementToMove.SetStatusMessage("I can't get there!" + "(" + destination.X + "," + destination.Y + ")");
                     this.SetComplete();
                 }
                 else

@@ -70,6 +70,11 @@ namespace PrototypeCoopSim.Objects
             return worldPositionY;
         }
 
+        public Vector2 getWorldPositionVector()
+        {
+            return new Vector2(this.worldPositionX, this.worldPositionY);
+        }
+
         public void SetMovable(bool state)
         {
             movable = state;
@@ -122,6 +127,11 @@ namespace PrototypeCoopSim.Objects
             return associatedMovementEvent.ReturnDestination();
         }
 
+        public String GetElementName()
+        {
+            return elementName;
+        }
+
         public void SetAnimationOffset(Vector2 offset)
         {
             animationOffset = offset;
@@ -140,6 +150,11 @@ namespace PrototypeCoopSim.Objects
         public virtual int UpdateCurrentHealth(int damage)
         {
             return currentHealth = currentHealth - damage;
+        }
+
+        public virtual int GetIconTypes()
+        {
+            return 0;
         }
 
         public virtual void draw(Renderer renderer)

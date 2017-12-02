@@ -28,6 +28,11 @@ namespace PrototypeCoopSim.Objects
             return base.UpdateCurrentHealth(damage);
         }
 
+        public override int GetIconTypes()
+        {
+            return 1;
+        }
+
         override public void draw(Renderer renderer)
         {
             renderer.drawTexturedRectangle((int)(GetAnimationOffset().X + (float)(this.getWorldPositionX() * 25)), (int)(this.GetAnimationOffset().Y + (float)(this.getWorldPositionY() * 25)), 25, 25, this.texture);

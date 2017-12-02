@@ -25,6 +25,18 @@
 /processorParam:TextureFormat=Color
 /build:Browntile.png
 
+#begin CircleIconHeighlight.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:CircleIconHeighlight.png
+
 #begin ConsoleText.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -67,6 +79,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Focus3.png
+
+#begin HarvestTreesIcon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:HarvestTreesIcon.png
 
 #begin PlainBlack.png
 /importer:TextureImporter
@@ -139,4 +163,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Tree1.png
+
+#begin WoodPile.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:WoodPile.png
 

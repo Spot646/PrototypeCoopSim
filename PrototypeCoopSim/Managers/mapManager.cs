@@ -97,6 +97,109 @@ namespace PrototypeCoopSim.Managers
             return sizeY;
         }
 
+        public bool TilePositionInBounds(Vector2 posToCheck)
+        {
+            int x = (int)posToCheck.X;
+            int y = (int)posToCheck.Y;
+            if (x >= 0 && x < this.getNumberTilesX()  && y >= 0 && y < this.getNumberTilesY())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public Vector2 FindNearest(Vector2 startOfSearch, String typeOfElement)
+        {
+            //spiral search until proper element hit
+            Vector2 target = new Vector2(-1, -1);
+            bool searching = true;
+            Vector2 searchPosition = new Vector2(startOfSearch.X, startOfSearch.Y);
+            bool increaseLength = false;
+            int lineLength = 1;
+            int direction = 4; //0 = north, 1 = east, 2 = south, 3 = west
+            bool searchShouldContinue = true;
+            
+            while (searching)
+            {
+                //roll direction
+                if(direction == 4)
+                {
+                    //check if no further squares to check
+                    if (searchShouldContinue)
+                    {
+                        searchShouldContinue = false;
+                    }
+                    else
+                    {
+                        searching = false;
+                    }
+                    direction = 0;
+                }
+
+                //translate direction
+                int xMod = 0;
+                int yMod = 0;
+                if (direction == 0) yMod--;
+                if (direction == 1) xMod++;
+                if (direction == 2) yMod++;
+                if (direction == 3) xMod--;
+
+                for (int l = 0; l < lineLength; l++)
+                {
+                    //increment search position
+                    searchPosition.X = searchPosition.X + xMod;
+                    searchPosition.Y = searchPosition.Y + yMod;
+                    //conduct search
+                    if (this.TilePositionInBounds(searchPosition))
+                    {
+                        searchShouldContinue = true;
+                        if (this.getOccupied(searchPosition))
+                        {
+                            if(this.getOccupyingElement(searchPosition).GetElementName() == typeOfElement)
+                            {
+                                //check to ensure a free space exists around the item
+                                for(int s = 0; s < 4; s++)
+                                {
+                                    int xSMod = 0;
+                                    int ySMod = 0;
+                                    if (direction == 0) ySMod--;
+                                    if (direction == 1) xSMod++;
+                                    if (direction == 2) ySMod++;
+                                    if (direction == 3) xSMod--;
+                                    Vector2 secondarySearchPosition = new Vector2(searchPosition.X + xSMod, searchPosition.Y + ySMod);
+                                    if (this.TilePositionInBounds(secondarySearchPosition)){
+                                        if (!this.getOccupied(secondarySearchPosition)){
+                                            searching = false;
+                                            l = lineLength;
+                                            target.X = secondarySearchPosition.X;
+                                            target.Y = secondarySearchPosition.Y;
+                                        }
+                                    }
+                                }                                
+                            }
+                        }
+                    }
+                }
+                //incriment direction
+                direction++;
+                //check if the next search line will be longer
+                if (increaseLength)
+                {
+                    lineLength++;
+                    increaseLength = false;
+                }
+                else
+                {
+                    increaseLength = true;
+                }
+            }
+
+            return target;
+        }
+
         public void setPassable(Vector2 focusTile, bool state)
         {
             passable[(int)focusTile.X + ((int)focusTile.Y * sizeX)] = state;
