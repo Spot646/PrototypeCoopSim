@@ -22,6 +22,7 @@ namespace PrototypeCoopSim.Events
             SetEventName("Mine Rocks");
             associatedMap = mapIn;
             associatedGame = gameIn;
+            inputManager = new InputManager(associatedMap);
         }
 
         public override void RunEvent(EventManager callingEventManager)

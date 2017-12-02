@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿       using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -120,6 +120,7 @@ namespace PrototypeCoopSim
             if (inputManager.EscapeButtonPressed()) Exit();
             if (inputManager.SpawnTreeButtonReleased()) eventManager.AddEvent(new EventAddTrees(this, currentMap, 1));
             if (inputManager.SpawnRockButtonReleased()) eventManager.AddEvent(new EventAddRocks(this, currentMap, 1));
+            if (inputManager.SpawnFireButtonReleased()) eventManager.AddEvent(new EventAddFirepit(this, currentMap, 1));
 
             //Check left mouse functions
             if (inputManager.LeftMouseButtonReleased())

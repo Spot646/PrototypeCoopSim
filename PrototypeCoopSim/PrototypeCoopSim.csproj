@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\EventAddFirepit.cs" />
     <Compile Include="Events\EventMineRocks.cs" />
     <Compile Include="Events\EventAddRocks.cs" />
     <Compile Include="Events\EventAddTrees.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Managers\mapManager.cs" />
     <Compile Include="Managers\UIManager.cs" />
     <Compile Include="Objects\gameElement.cs" />
+    <Compile Include="Objects\FirepitElement.cs" />
     <Compile Include="Objects\RockElement.cs" />
     <Compile Include="Objects\treeElement.cs" />
     <Compile Include="Objects\WorkerElement.cs" />

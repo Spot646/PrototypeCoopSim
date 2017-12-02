@@ -32,6 +32,10 @@ namespace PrototypeCoopSim.Managers
         private bool spawnRockButtonPressed = false;
         private bool spawnRockButtonReleased = false;
 
+        //Spawn Fire
+        private bool spawnFireButtonPressed = false;
+        private bool spawnFireButtonReleased = false;
+
         //Escape
         private bool escapeButtonPressed = false;
         private bool escapeButtonReleased = false;
@@ -67,6 +71,7 @@ namespace PrototypeCoopSim.Managers
             rightMouseReleased = false;
             spawnTreeButtonReleased = false;
             spawnRockButtonReleased = false;
+            spawnFireButtonReleased = false;
             escapeButtonReleased = false;
             if(leftMouseDragEnd)
             {
@@ -120,6 +125,7 @@ namespace PrototypeCoopSim.Managers
                 //Check for button down events
                 if (Keyboard.GetState().IsKeyDown(Keys.T)) spawnTreeButtonPressed = true;
                 if (Keyboard.GetState().IsKeyDown(Keys.R)) spawnRockButtonPressed = true;
+                if (Keyboard.GetState().IsKeyDown(Keys.F)) spawnFireButtonPressed = true;
                 if (Keyboard.GetState().IsKeyDown(Keys.Escape)) escapeButtonPressed = true;
 
                 //Check for button release events
@@ -156,6 +162,7 @@ namespace PrototypeCoopSim.Managers
 
                 if (Keyboard.GetState().IsKeyUp(Keys.T) && spawnTreeButtonPressed) { spawnTreeButtonPressed = false; spawnTreeButtonReleased = true; }
                 if (Keyboard.GetState().IsKeyUp(Keys.R) && spawnRockButtonPressed) { spawnRockButtonPressed = false; spawnRockButtonReleased = true; }
+                if (Keyboard.GetState().IsKeyUp(Keys.F) && spawnFireButtonPressed) { spawnFireButtonPressed = false; spawnFireButtonReleased = true; }
                 if (Keyboard.GetState().IsKeyUp(Keys.Escape) && escapeButtonPressed) { escapeButtonPressed = false; escapeButtonReleased = true; }
             }
             else
@@ -175,6 +182,11 @@ namespace PrototypeCoopSim.Managers
         public bool SpawnRockButtonReleased()
         {
             return spawnRockButtonReleased;
+        }
+
+        public bool SpawnFireButtonReleased()
+        {
+            return spawnFireButtonReleased;
         }
 
         public bool LeftMouseButtonPressed()
