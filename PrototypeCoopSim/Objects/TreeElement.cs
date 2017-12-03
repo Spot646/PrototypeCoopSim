@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.RenderLayer;
+using PrototypeCoopSim.Settings;
 
 namespace PrototypeCoopSim.Objects
 {
@@ -28,7 +29,8 @@ namespace PrototypeCoopSim.Objects
         }
         override public void draw(Renderer renderer)
         {
-            renderer.drawTexturedRectangle(0 + (this.getWorldPositionX() * 25), 0 + (this.getWorldPositionY() * 25), 25, 25, this.texture);
+            renderer.drawTexturedRectangle(0 + (this.getWorldPositionX() * GlobalVariables.TILE_SIZE), 0 + (this.getWorldPositionY() * GlobalVariables.TILE_SIZE), GlobalVariables.TILE_SIZE, GlobalVariables.TILE_SIZE, this.texture);
         }
+        
     }
 }

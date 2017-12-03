@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.RenderLayer;
+using PrototypeCoopSim.Settings;
 
 namespace PrototypeCoopSim.Managers
 {
@@ -275,7 +276,7 @@ namespace PrototypeCoopSim.Managers
             {
                 for (int mapUnitHeight = 0; mapUnitHeight < sizeY; mapUnitHeight++)
                 {
-                    renderer.drawTexturedRectangle(0 + (mapUnitWidth * 25), 0 + (mapUnitHeight * 25), 25, 25, groundTexture);
+                    renderer.drawTexturedRectangle(0 + (mapUnitWidth * GlobalVariables.TILE_SIZE), 0 + (mapUnitHeight * GlobalVariables.TILE_SIZE), GlobalVariables.TILE_SIZE, GlobalVariables.TILE_SIZE, groundTexture);
                 }
             }
 

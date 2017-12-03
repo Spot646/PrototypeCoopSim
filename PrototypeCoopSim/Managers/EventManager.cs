@@ -38,9 +38,21 @@ namespace PrototypeCoopSim.Managers
                     {
                         eventList[i].RunEvent(this);
                     }
+                    //check for orphaned events
+                    /*
+                    else
+                    {
+                        if (eventList[i].SuspentUntilThisEventFinished() != null)
+                        {
+                            if (eventList[i].SuspentUntilThisEventFinished().IsComplete())
+                            {
+                                eventList[i].SetComplete();
+                            }                            
+                        }
+                    }*/
                 }
 
-                //Delete complteed events
+                //Delete completed events
                 for (int i = 0; i < eventList.Count; i++)
                 {
                     if (eventList[i].HasEnded())

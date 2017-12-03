@@ -6,12 +6,14 @@ using PrototypeCoopSim.Events;
 using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.RenderLayer;
 using PrototypeCoopSim.Managers;
+using PrototypeCoopSim.Settings;
 
 namespace PrototypeCoopSim.Managers
 {
     class InputManager
     {
         private mapManager associatedMap;
+        private UIManager associatedUIManager;
 
         //Left Mouse
         private bool mouseLostFocus = true;
@@ -36,15 +38,16 @@ namespace PrototypeCoopSim.Managers
         private bool escapeButtonPressed = false;
         private bool escapeButtonReleased = false;
 
-        public InputManager(mapManager mapIn)
+        public InputManager(mapManager mapIn, UIManager uiManagerIn)
         {
             associatedMap = mapIn;
+            associatedUIManager = uiManagerIn;
         }
 
         public Vector2 GetCurrentMouseTile(mapManager mapIn)
         {
             MouseState mouseState = Mouse.GetState();
-            return mapIn.getTileFromMousePosition(mouseState.X, mouseState.Y, 25, 0, 0, 500, 600);
+            return mapIn.getTileFromMousePosition(mouseState.X, mouseState.Y, GlobalVariables.TILE_SIZE, 0, 0, associatedUIManager.GetGameWindowWidth(), associatedUIManager.GetGameWindowHeight());
         }
 
         public bool MouseOverCircle(Vector2 position, float radius)
@@ -67,7 +70,7 @@ namespace PrototypeCoopSim.Managers
         public bool MouseOverMap()
         {
             MouseState mouseState = Mouse.GetState();
-            if (mouseState.X > 0 && mouseState.X < 500 && mouseState.Y > 0 && mouseState.Y < 600)
+            if (mouseState.X > 0 && mouseState.X < associatedUIManager.GetGameWindowWidth() && mouseState.Y > 0 && mouseState.Y < associatedUIManager.GetGameWindowHeight())
             {
                 return true;
             }
@@ -102,7 +105,7 @@ namespace PrototypeCoopSim.Managers
                     //Start Drag
                     if (this.MouseOverMap())
                     {
-                        Vector2 currentMouseTile = associatedMap.getTileFromMousePosition(Mouse.GetState().X, Mouse.GetState().Y, 25, 0, 0, 500, 600);
+                        Vector2 currentMouseTile = associatedMap.getTileFromMousePosition(Mouse.GetState().X, Mouse.GetState().Y, GlobalVariables.TILE_SIZE, 0, 0, associatedUIManager.GetGameWindowWidth(), associatedUIManager.GetGameWindowHeight());
                         if (!leftMousePressed)
                         {
                             mouseTileStartDrag = currentMouseTile;
@@ -125,9 +128,11 @@ namespace PrototypeCoopSim.Managers
                         mouseTileStartDrag.Y = 0;
                         mouseTileEndDrag.X = 0;
                         mouseTileEndDrag.Y = 0;
-                        mouseLostFocus = true;
+                        leftMousePressed = false;
+                        leftMouseReleased = false;
+                        rightMousePressed = false;
+                        rightMouseReleased = false;
                     }
-
                     //Basic click
                     leftMousePressed = true;
                 }
@@ -146,7 +151,7 @@ namespace PrototypeCoopSim.Managers
                     leftMouseReleased = true;
                     if (leftMouseDragStart && this.MouseOverMap())
                     {
-                        mouseTileEndDrag = associatedMap.getTileFromMousePosition(Mouse.GetState().X, Mouse.GetState().Y, 25, 0, 0, 500, 600);
+                        mouseTileEndDrag = associatedMap.getTileFromMousePosition(Mouse.GetState().X, Mouse.GetState().Y, GlobalVariables.TILE_SIZE, 0, 0, associatedUIManager.GetGameWindowWidth(), associatedUIManager.GetGameWindowHeight());
                         if (mouseTileStartDrag.X != mouseTileEndDrag.X || mouseTileStartDrag.Y != mouseTileEndDrag.Y)
                         {
                             leftMouseDragEnd = true;

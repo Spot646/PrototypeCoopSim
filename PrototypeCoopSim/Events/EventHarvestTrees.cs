@@ -81,14 +81,19 @@ namespace PrototypeCoopSim.Events
                     else
                     {
                         //move to tree
+                        EventMoveTo movingEvent = new EventMoveTo(associatedGame, associatedMap, focusElement, treeToTarget, gameTime);
                         if (focusElement.Moving())
                         {
-                            focusElement.KillLinkedMovement();
+                            focusElement.ReplaceLinkedMovement(movingEvent);
+                            associatedEventManager.AddEvent(movingEvent);
+                            this.Suspend(movingEvent);
                         }
-                        EventMoveTo movingEvent = new EventMoveTo(associatedGame, associatedMap, focusElement, treeToTarget, gameTime);
-                        focusElement.LinkToMoveEvent(movingEvent);
-                        associatedEventManager.AddEvent(movingEvent);
-                        this.Suspend(movingEvent);
+                        else
+                        {
+                            focusElement.LinkToMoveEvent(movingEvent);
+                            associatedEventManager.AddEvent(movingEvent);
+                            this.Suspend(movingEvent);
+                        }                        
                     }
                 }
             }

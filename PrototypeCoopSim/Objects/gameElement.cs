@@ -57,6 +57,10 @@ namespace PrototypeCoopSim.Objects
             {
                 detailString = detailString + Environment.NewLine + "(" + "Idle" + ")";
             }
+            if (this.Moving())
+            {
+                detailString = detailString + Environment.NewLine + "(" + "Moving" + ")";
+            }
             return detailString;
         }
 
@@ -118,7 +122,23 @@ namespace PrototypeCoopSim.Objects
             {
                 idle = true;
                 moving = false;
-                associatedMovementEvent.SetComplete();
+                associatedMovementEvent.ShutdownSmoothly();
+            }
+        }
+
+        public void ReplaceLinkedMovement(EventMoveTo newMovementEvent)
+        {
+            if (moving)
+            {
+                idle = true;
+                moving = false;
+                newMovementEvent.Suspend(associatedMovementEvent);
+                associatedMovementEvent.ShutdownSmoothly();
+                this.LinkToMoveEvent(newMovementEvent);
+            }
+            else
+            {
+                this.LinkToMoveEvent(newMovementEvent);
             }
         }
 

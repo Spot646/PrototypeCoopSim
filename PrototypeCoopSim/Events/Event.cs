@@ -12,8 +12,10 @@ namespace PrototypeCoopSim.Events
     class Event
     {
         Event callingEvent = null;
+        Event suspendEvent = null;
         private String eventName;
         bool completed = false;
+        bool shutdownSmoothly = false;
         private bool active = true;
 
         public Event (){
@@ -28,6 +30,7 @@ namespace PrototypeCoopSim.Events
         public void Suspend(Event completionEventIn)
         {
             active = false;
+            suspendEvent = completionEventIn;
             completionEventIn.setCallingEvent(this);
         }
 
@@ -36,9 +39,20 @@ namespace PrototypeCoopSim.Events
             callingEvent = callingEventIn;
         }
 
+        public Event GetCallingEvent()
+        {
+            return callingEvent;
+        }
+
+        public Event SuspentUntilThisEventFinished()
+        {
+            return suspendEvent;
+        }
+
         public void Activate()
         {
             active = true;
+            suspendEvent = null;
         }
 
         public bool IsActive()
@@ -49,6 +63,21 @@ namespace PrototypeCoopSim.Events
         public void SetComplete()
         {
             completed = true;
+        }
+
+        public bool IsComplete()
+        {
+            return completed;
+        }
+
+        public void ShutdownSmoothly()
+        {
+            shutdownSmoothly = true;
+        }
+
+        public bool GetShutdownSmoothly()
+        {
+            return shutdownSmoothly;
         }
 
         public bool HasEnded()

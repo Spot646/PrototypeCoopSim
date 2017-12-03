@@ -18,7 +18,7 @@ namespace PrototypeCoopSim
         Renderer renderer;
 
         //Map
-        const int mapTilesX = 20;
+        const int mapTilesX = 24;
         const int mapTilesY = 24;
         mapManager currentMap;
 
@@ -60,7 +60,7 @@ namespace PrototypeCoopSim
             IsFixedTimeStep = false; //Variable
 
             //Screen settings
-            renderer.setScreenSize(graphics, 800, 600);
+            renderer.setScreenSize(graphics, 1024, 768);
             
             this.IsMouseVisible = true;
 
@@ -69,12 +69,12 @@ namespace PrototypeCoopSim
 
             //Setup Events
             eventManager = new EventManager(this, currentMap);
-
+            
             //Setup UI
-            uiManager = new UIManager(this, renderer);
+            uiManager = new UIManager(this, renderer, graphics.GraphicsDevice);
 
             //Setup Input
-            inputManager = new InputManager(currentMap);
+            inputManager = new InputManager(currentMap, uiManager);
 
             //Manage focus
             elementFocus.Clear();
@@ -86,7 +86,6 @@ namespace PrototypeCoopSim
             currentMap.setOccupyingElement(new Vector2((int)currentMap.getNumberTilesX() / 2 + 1, (int)currentMap.getNumberTilesY() / 2), new WorkerElement(this, (int)currentMap.getNumberTilesX() / 2 + 1, (int)currentMap.getNumberTilesY() / 2));
             currentMap.setOccupied(new Vector2((int)currentMap.getNumberTilesX() / 2 - 1, (int)currentMap.getNumberTilesY() / 2), true);
             currentMap.setOccupyingElement(new Vector2((int)currentMap.getNumberTilesX() / 2 - 1, (int)currentMap.getNumberTilesY() / 2), new WorkerElement(this, (int)currentMap.getNumberTilesX() / 2 - 1, (int)currentMap.getNumberTilesY() / 2));
-
 
             //Variable initialization
             //////////////////////////////////////////////////////////////
@@ -159,13 +158,17 @@ namespace PrototypeCoopSim
                 {
                     if (elementFocus[i].GetMovable())
                     {
+                        EventMoveTo movingEvent = new EventMoveTo(this, currentMap, elementFocus[i], inputManager.GetCurrentMouseTile(currentMap), gameTime);
                         if (elementFocus[i].Moving())
                         {
-                            elementFocus[i].KillLinkedMovement();
+                            elementFocus[i].ReplaceLinkedMovement(movingEvent);
+                            eventManager.AddEvent(movingEvent);
                         }
-                        EventMoveTo movingEvent = new EventMoveTo(this, currentMap, elementFocus[i], inputManager.GetCurrentMouseTile(currentMap), gameTime);
-                        elementFocus[i].LinkToMoveEvent(movingEvent);
-                        eventManager.AddEvent(movingEvent);
+                        else
+                        {
+                            elementFocus[i].LinkToMoveEvent(movingEvent);
+                            eventManager.AddEvent(movingEvent);
+                        }
                     }
                 }
 
@@ -200,6 +203,7 @@ namespace PrototypeCoopSim
 
             //Draw Console
             uiManager.DrawConsole();
+
             if (elementFocus.Count > 0)
             { 
                 uiManager.DrawCurrentFocusActionIcons(elementFocus[0], inputManager);

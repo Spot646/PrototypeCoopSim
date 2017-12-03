@@ -51,7 +51,7 @@ namespace PrototypeCoopSim.RenderLayer
 
         public void drawText(String text, int posX, int posY, SpriteFont font)
         {
-            spriteBatch.DrawString(font, text, new Vector2(510, 10), Color.Black);
+            spriteBatch.DrawString(font, text, new Vector2(posX, posY), Color.Black);
         }
     }
 }

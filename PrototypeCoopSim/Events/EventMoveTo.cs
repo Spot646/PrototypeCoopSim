@@ -7,6 +7,7 @@ using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.RenderLayer;
 using PrototypeCoopSim.Managers;
 using System.Collections.Generic;
+using PrototypeCoopSim.Settings;
 
 namespace PrototypeCoopSim.Events
 {
@@ -85,33 +86,43 @@ namespace PrototypeCoopSim.Events
             }
             else
             {
-                if (pathFound)
+                if (!this.GetShutdownSmoothly())
                 {
-                    this.PerformNextMove();
-                }
-                else
-                {
-                    if (flowMapProduced)
+                    if (pathFound)
                     {
-                        this.GeneratePath();
+                        this.PerformNextMove();
                     }
                     else
                     {
-                        this.DevelopFlowMap();
+                        if (flowMapProduced)
+                        {
+                            this.GeneratePath();
+                        }
+                        else
+                        {
+                            this.DevelopFlowMap();
+                        }
                     }
                 }
+                else
+                {
+                    this.SetComplete();
+                }
             }
-            //reached destination
-            if((Math.Abs(elementToMove.getWorldPositionX() - elementToMove.GetFinalDestination().X) + Math.Abs(elementToMove.getWorldPositionY() - elementToMove.GetFinalDestination().Y) == 0))
+            if (!this.GetShutdownSmoothly())
             {
-                elementToMove.KillLinkedMovement();
-            }
-            //closest I can get
-            if ((Math.Abs(elementToMove.getWorldPositionX() - elementToMove.GetFinalDestination().X) + Math.Abs(elementToMove.getWorldPositionY() - elementToMove.GetFinalDestination().Y) == 1) && associatedMap.getOccupied(elementToMove.GetFinalDestination()))
-            {
-                if (associatedMap.getOccupyingElement(elementToMove.GetFinalDestination()).Idle())
+                //reached destination
+                if ((Math.Abs(elementToMove.getWorldPositionX() - elementToMove.GetFinalDestination().X) + Math.Abs(elementToMove.getWorldPositionY() - elementToMove.GetFinalDestination().Y) == 0))
                 {
                     elementToMove.KillLinkedMovement();
+                }
+                //closest I can get
+                if ((Math.Abs(elementToMove.getWorldPositionX() - elementToMove.GetFinalDestination().X) + Math.Abs(elementToMove.getWorldPositionY() - elementToMove.GetFinalDestination().Y) == 1) && associatedMap.getOccupied(elementToMove.GetFinalDestination()))
+                {
+                    if (associatedMap.getOccupyingElement(elementToMove.GetFinalDestination()).Idle())
+                    {
+                        elementToMove.KillLinkedMovement();
+                    }
                 }
             }
         }
@@ -127,7 +138,7 @@ namespace PrototypeCoopSim.Events
                 associatedMap.setOccupied(destination, true);
                 associatedMap.setOccupyingElement(destination, elementToMove);
             }
-            if (moveGoingOn)
+            if (moveGoingOn && !this.GetShutdownSmoothly())
             {
                 //Process the move
                 //Find direction of move
@@ -144,14 +155,17 @@ namespace PrototypeCoopSim.Events
                 elementToMove.SetAnimationOffset(newAnimationOffset);
 
                 //Has the move finished?
-                if (Math.Abs(newAnimationOffset.X) > 25 || Math.Abs(newAnimationOffset.Y) > 25)
+                if (Math.Abs(newAnimationOffset.X) > GlobalVariables.TILE_SIZE || Math.Abs(newAnimationOffset.Y) > GlobalVariables.TILE_SIZE)
                 {
                     associatedMap.setOccupied(new Vector2(elementToMove.getWorldPositionX(), elementToMove.getWorldPositionY()), false);
                     associatedMap.setOccupyingElement(new Vector2(elementToMove.getWorldPositionX(), elementToMove.getWorldPositionY()), null);
                     elementToMove.worldPositionX = (int)destination.X;
                     elementToMove.worldPositionY = (int)destination.Y;
                     elementToMove.SetAnimationOffset(new Vector2(0, 0));
-                    elementToMove.SetStatusMessage("I'm Here!");                   
+                    if (this.GetCallingEvent() == null)
+                    {
+                        elementToMove.SetStatusMessage("I'm Here!");
+                    }
                     this.SetComplete();
                 }
                 else
