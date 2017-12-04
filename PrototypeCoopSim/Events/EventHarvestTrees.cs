@@ -21,6 +21,11 @@ namespace PrototypeCoopSim.Events
         //flags
         bool nextToTree;
         bool repeating;
+        bool seekingTree;
+
+        //counters
+        public int retryCounter;
+        private const int retryAttempts = 5;
 
         //Info
         Vector2 treeLocation;
@@ -33,14 +38,30 @@ namespace PrototypeCoopSim.Events
             associatedMap = mapIn;
             gameTime = gameTimeIn;
             focusElement = focusElementIn;
+            retryCounter = 0;
             treeLocation = new Vector2(-1, -1);
             nextToTree = false;
+            seekingTree = false;
         }
         
         public override void RunEvent(EventManager callingEventManager)
         {
             if (!nextToTree)
             {
+                if (seekingTree){
+                    retryCounter++;
+                    focusElement.SetStatusMessage("Couldn't get to a tree");
+                    //keep a retry counter and retry up to 5 times
+                    if(retryCounter < retryAttempts)
+                    {
+                        EventHarvestTrees retryEvent = new EventHarvestTrees(associatedGame, associatedMap, associatedEventManager, focusElement, gameTime, repeating);
+                        retryEvent.retryCounter = retryCounter;
+                        callingEventManager.AddEvent(retryEvent);
+                    }
+                    //reset on success
+                    seekingTree = false;
+                    this.SetComplete();
+                }
                 //check if next to tree
                 Vector2 testLocation = new Vector2(-1, -1);
                 for (int i = 0; i < 4; i++)
@@ -70,6 +91,7 @@ namespace PrototypeCoopSim.Events
                 //if not, find tree
                 else
                 {
+                    seekingTree = true;
                     Vector2 treeToTarget = associatedMap.FindNearest(focusElement.getWorldPositionVector(), "Tree");
                     //check if a real tree was found
                     if (treeToTarget.X == -1 && treeToTarget.Y == -1)
@@ -103,6 +125,8 @@ namespace PrototypeCoopSim.Events
                 //hit tree
                 if (associatedMap.getOccupied(treeLocation))
                 {
+                    //success, reset retry counter
+                    retryCounter = 0;
                     if(associatedMap.getOccupyingElement(treeLocation).GetElementName() == "Tree")
                     {
                         associatedMap.getOccupyingElement(treeLocation).UpdateCurrentHealth(1);

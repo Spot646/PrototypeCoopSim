@@ -182,6 +182,15 @@ namespace PrototypeCoopSim.Managers
                                 }                                
                             }
                         }
+                        else
+                        {
+                            if(typeOfElement == "Empty")
+                            {
+                                searching = false;
+                                l = lineLength;
+                                target = searchPosition;
+                            }
+                        }
                     }
                 }
                 //incriment direction

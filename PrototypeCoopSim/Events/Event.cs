@@ -34,6 +34,11 @@ namespace PrototypeCoopSim.Events
             completionEventIn.setCallingEvent(this);
         }
 
+        public void SetSuspendUntilEvent(Event suspendEventIn)
+        {
+            suspendEvent = suspendEventIn;
+        }
+
         public void setCallingEvent(Event callingEventIn)
         {
             callingEvent = callingEventIn;

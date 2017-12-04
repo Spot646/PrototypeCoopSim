@@ -90,7 +90,7 @@ namespace PrototypeCoopSim
             //Variable initialization
             //////////////////////////////////////////////////////////////
             //Generate map
-            eventManager.AddEvent(new EventGenerateWorld(this, currentMap, 15,5));
+            eventManager.AddEvent(new EventGenerateWorld(this, currentMap, 4, 90, 3, 5));
 
             base.Initialize();
         }
@@ -117,7 +117,7 @@ namespace PrototypeCoopSim
 
             //Check for key presses
             if (inputManager.EscapeButtonPressed()) Exit();
-            if (inputManager.SpawnTreeButtonReleased()) eventManager.AddEvent(new EventAddTrees(this, currentMap, 1));
+            if (inputManager.SpawnTreeButtonReleased()) eventManager.AddEvent(new EventAddTrees(this, currentMap, 1, 1, 0));
             if (inputManager.SpawnRockButtonReleased()) eventManager.AddEvent(new EventAddRocks(this, currentMap, 1));
 
             //Check left mouse functions
@@ -128,7 +128,7 @@ namespace PrototypeCoopSim
                     elementFocus.Clear();
                     currentMap.GetAllElementsInArea(elementFocus, inputManager.GetMouseDragStartTile(), inputManager.GetMouseDragEndTile());
                 }
-                else if (currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap)))
+                else if (inputManager.MouseOverMap() && currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap)))
                 {
                     currentMap.getOccupyingElement(inputManager.GetCurrentMouseTile(currentMap)).UpdateCurrentHealth(5);
                     elementFocus.Clear();
@@ -158,6 +158,8 @@ namespace PrototypeCoopSim
                 {
                     if (elementFocus[i].GetMovable())
                     {
+                        //clear any previous stuck condition
+                        elementFocus[i].SetStuck(false);
                         EventMoveTo movingEvent = new EventMoveTo(this, currentMap, elementFocus[i], inputManager.GetCurrentMouseTile(currentMap), gameTime);
                         if (elementFocus[i].Moving())
                         {

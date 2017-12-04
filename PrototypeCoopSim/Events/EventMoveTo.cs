@@ -28,9 +28,13 @@ namespace PrototypeCoopSim.Events
         private bool flowMapProduced;
         private bool pathFound;
         private bool noPathExists;
+        private bool movementWasPossible;
 
         //Current path
         private List<Vector2> currentPath;
+        private int reattemptCounter;
+        private const int reattemptLimit = 20;
+        private Vector2 originalDestination;
 
         //animation controls
         GameTime gameTime;
@@ -57,7 +61,10 @@ namespace PrototypeCoopSim.Events
             pathFound = false;
             flowMapProduced = false;
             noPathExists = false;
+            movementWasPossible = false;
             nextListTarget = 0;
+            reattemptCounter = 0;
+            originalDestination = destination;
             moveGoingOn = false;
             currentPath = new List<Vector2>();
             currentPath.Clear();
@@ -78,18 +85,43 @@ namespace PrototypeCoopSim.Events
         {
 
             callingEventManager = callingEventManagerIn;
+    
             //Check if the goal is one move away and if it is not occupied
             if (Math.Abs(elementToMove.getWorldPositionX() - destination.X) + Math.Abs(elementToMove.getWorldPositionY() - destination.Y) <= 1)
             {
-                //In this case we either only have to move one step - or this is a component of a larger path
-                this.MoveToDestination();                
+                if (moveGoingOn || !associatedMap.getOccupied(destination))
+                {
+                    //In this case we either only have to move one step - or this is a component of a larger path
+                    this.MoveToDestination();
+                }
+                else
+                {
+                    elementToMove.SetStuck(true);
+                    //kill user event if this wasn't a child
+                    if (elementToMove.GetFinalDestination() == destination)
+                    {
+                        this.SetComplete();
+                        elementToMove.KillLinkedMovement();
+                    }
+                    else
+                    {
+                        this.SetComplete();
+                    }
+                }            
             }
             else
             {
+                if (reattemptCounter > reattemptLimit)
+                {
+                    elementToMove.SetStatusMessage("Ran out of attempts");
+                    this.ShutdownSmoothly();
+                    elementToMove.KillLinkedMovement();
+                }
                 if (!this.GetShutdownSmoothly())
                 {
                     if (pathFound)
                     {
+                        movementWasPossible = true;
                         this.PerformNextMove();
                     }
                     else
@@ -106,6 +138,7 @@ namespace PrototypeCoopSim.Events
                 }
                 else
                 {
+                    elementToMove.KillLinkedMovement();
                     this.SetComplete();
                 }
             }
@@ -115,14 +148,6 @@ namespace PrototypeCoopSim.Events
                 if ((Math.Abs(elementToMove.getWorldPositionX() - elementToMove.GetFinalDestination().X) + Math.Abs(elementToMove.getWorldPositionY() - elementToMove.GetFinalDestination().Y) == 0))
                 {
                     elementToMove.KillLinkedMovement();
-                }
-                //closest I can get
-                if ((Math.Abs(elementToMove.getWorldPositionX() - elementToMove.GetFinalDestination().X) + Math.Abs(elementToMove.getWorldPositionY() - elementToMove.GetFinalDestination().Y) == 1) && associatedMap.getOccupied(elementToMove.GetFinalDestination()))
-                {
-                    if (associatedMap.getOccupyingElement(elementToMove.GetFinalDestination()).Idle())
-                    {
-                        elementToMove.KillLinkedMovement();
-                    }
                 }
             }
         }
@@ -142,6 +167,7 @@ namespace PrototypeCoopSim.Events
             {
                 //Process the move
                 //Find direction of move
+                elementToMove.SetStuck(false);
                 float xMove = 0.0f;
                 float yMove = 0.0f;
                 if (elementToMove.getWorldPositionX() > destination.X) xMove = -1.0f;
@@ -175,6 +201,7 @@ namespace PrototypeCoopSim.Events
             }
             else
             {
+                elementToMove.SetStuck(true);
                 this.SetComplete();
             }
         }
@@ -195,51 +222,52 @@ namespace PrototypeCoopSim.Events
                     if (associatedMap.getOccupyingElement(new Vector2(currentPath[1].X, currentPath[1].Y)).GetMovable())
                     {
                         bool attemptPush = false;
-                        elementToMove.SetStatusMessage("Someone is in my spot!");
-                        //Try to push them
-                        //TODO fix out of range on push
-                        if (associatedMap.getOccupyingElement(new Vector2(currentPath[1].X, currentPath[1].Y)).Idle())
+                        if (elementToMove.GetStuck())
                         {
-                            Vector2 safeSpotToPush = new Vector2(-1, -1);
-                            if (!associatedMap.getOccupied(new Vector2(currentPath[1].X + 1, currentPath[1].Y)))
+                            //already stuck, stop movement
+                            elementToMove.KillLinkedMovement();
+                            this.ShutdownSmoothly();
+                        }
+                        else
+                        {
+                            elementToMove.SetStuck(true);
+                        }                        
+                        elementToMove.SetStatusMessage("Someone is in my spot!");
+                        this.ShutdownSmoothly(); //instead of kill
+                        canContinue = false;
+                        if (associatedMap.getOccupied(elementToMove.GetFinalDestination())){
+                            if (!associatedMap.getOccupyingElement(elementToMove.GetFinalDestination()).Moving())
                             {
-                                safeSpotToPush.X = currentPath[1].X + 1;
-                                safeSpotToPush.Y = currentPath[1].Y;
-                                attemptPush = true;
+                                reattemptCounter++;
+                                EventMoveTo reattempt = new EventMoveTo(associatedGame, associatedMap, elementToMove, associatedMap.FindNearest(originalDestination, "Empty"), this.gameTime);
+                                //transfer the calling event to the new event as we are giving up control
+                                reattempt.setCallingEvent(this.GetCallingEvent());
+                                reattempt.SetReattemptCounter(reattemptCounter);
+                                reattempt.SetOriginalDestination(originalDestination);
+                                elementToMove.ReplaceLinkedMovement(reattempt);
+                                callingEventManager.AddEvent(reattempt);
                             }
-                            else if (!associatedMap.getOccupied(new Vector2(currentPath[1].X - 1, currentPath[1].Y)))
+                            else
                             {
-                                safeSpotToPush.X = currentPath[1].X - 1;
-                                safeSpotToPush.Y = currentPath[1].Y;
-                                attemptPush = true;
-                            }
-                            else if (!associatedMap.getOccupied(new Vector2(currentPath[1].X, currentPath[1].Y + 1)))
-                            {
-                                safeSpotToPush.X = currentPath[1].X;
-                                safeSpotToPush.Y = currentPath[1].Y + 1;
-                                attemptPush = true;
-                            }
-                            else if (!associatedMap.getOccupied(new Vector2(currentPath[1].X, currentPath[1].Y - 1)))
-                            {
-                                safeSpotToPush.X = currentPath[1].X;
-                                safeSpotToPush.Y = currentPath[1].Y - 1;
-                                attemptPush = true;
-                            }
-                            if (attemptPush)
-                            {
-                                EventMoveTo pushEvent = new EventMoveTo(associatedGame, associatedMap, associatedMap.getOccupyingElement(new Vector2(currentPath[1].X, currentPath[1].Y)), safeSpotToPush, gameTime);
-                                associatedMap.getOccupyingElement(new Vector2(currentPath[1].X, currentPath[1].Y)).KillLinkedMovement();
-                                associatedMap.getOccupyingElement(new Vector2(currentPath[1].X, currentPath[1].Y)).LinkToMoveEvent(pushEvent);
-                                callingEventManager.AddEvent(pushEvent);
+                                reattemptCounter++;
+                                EventMoveTo reattempt = new EventMoveTo(associatedGame, associatedMap, elementToMove, destination, this.gameTime);
+                                //transfer the calling event to the new event as we are giving up control
+                                reattempt.setCallingEvent(this.GetCallingEvent());
+                                reattempt.SetReattemptCounter(reattemptCounter);
+                                elementToMove.ReplaceLinkedMovement(reattempt);
+                                callingEventManager.AddEvent(reattempt);
                             }
                         }
-                        elementToMove.KillLinkedMovement();
-                        canContinue = false;
-                        if (attemptPush || associatedMap.getOccupyingElement(new Vector2(currentPath[1].X, currentPath[1].Y)).Moving()) { 
+                        else
+                        {
+                            reattemptCounter++;
                             EventMoveTo reattempt = new EventMoveTo(associatedGame, associatedMap, elementToMove, destination, this.gameTime);
-                            elementToMove.LinkToMoveEvent(reattempt);
-                            callingEventManager.AddEvent(reattempt);
-                        }                        
+                            //transfer the calling event to the new event as we are giving up control
+                            reattempt.setCallingEvent(this.GetCallingEvent());
+                            reattempt.SetReattemptCounter(reattemptCounter);
+                            elementToMove.ReplaceLinkedMovement(reattempt);
+                            callingEventManager.AddEvent(reattempt);                           
+                        }
                     }
                 }
             }
@@ -284,9 +312,15 @@ namespace PrototypeCoopSim.Events
             {
                 //an error has occured - fail the path
                 elementToMove.SetStatusMessage("Hmm, something blocked my path.");
+                elementToMove.SetStuck(true);
                 noPathExists = true;
                 this.SetComplete();
             }
+        }
+
+        public void SetReattemptCounter(int counter)
+        {
+            reattemptCounter = counter;
         }
 
         public Vector2 ReturnDestination()
@@ -294,34 +328,60 @@ namespace PrototypeCoopSim.Events
             return destination;
         }
 
+        public void SetOriginalDestination(Vector2 destinationIn)
+        {
+            originalDestination = destinationIn;
+        }
+
         private void DevelopFlowMap()
         {
             if(nodeList.Count == 0)
             {
                 //seed list
-                //elementToMove.SetStatusMessage("Looking for path");
+                elementToMove.SetStatusMessage("Looking for path");
                 MapNode newNode;
                 newNode.nodeLocation = new Vector2(elementToMove.getWorldPositionX(), elementToMove.getWorldPositionY());
                 newNode.nodePreviousLocation = new Vector2(elementToMove.getWorldPositionX(), elementToMove.getWorldPositionY());
                 nodeList.Add(newNode);
                 nextListTarget = 0;
                 checkedMap[elementToMove.getWorldPositionX(), elementToMove.getWorldPositionY()] = true;
+                //check to see if my end target is populated already, and if I should shift my target
+                if (associatedMap.getOccupied(this.destination))
+                {
+                    if(associatedMap.getOccupyingElement(this.destination).Idle() || associatedMap.getOccupyingElement(this.destination).GetStuck())
+                    {
+                        this.destination = associatedMap.FindNearest(originalDestination, "Empty");
+                    }
+                }
             }
             else
             {
-                //grow list
-                if(nextListTarget >= nodeList.Count)
+                //check if target was populated
+                if (associatedMap.getOccupied(destination))
                 {
-                    //No further nodes to check, end search
-                    noPathExists = true;
-                    elementToMove.SetStatusMessage("I can't get there!" + "(" + destination.X + "," + destination.Y + ")");
+                    if (associatedMap.getOccupyingElement(destination).GetMovable() && !associatedMap.getOccupyingElement(destination).Idle() && !associatedMap.getOccupyingElement(destination).GetStuck())
+                    {
+                        nodeList.Clear();
+                    }
+                }
+                //grow list
+                if (nextListTarget >= nodeList.Count)
+                {
+                    reattemptCounter++;
+                    EventMoveTo reattempt = new EventMoveTo(associatedGame, associatedMap, elementToMove, associatedMap.FindNearest(originalDestination, "Empty"), this.gameTime);
+                    //transfer the calling event to the new event as we are giving up control
+                    reattempt.setCallingEvent(this.GetCallingEvent());
+                    reattempt.SetReattemptCounter(reattemptCounter);
+                    reattempt.SetOriginalDestination(originalDestination);
+                    elementToMove.ReplaceLinkedMovement(reattempt);
                     this.SetComplete();
+                    callingEventManager.AddEvent(reattempt);
                 }
                 else
                 {
                     //still nodes to check
                     //check 4 cardinal directions
-                    for(int i = 0; i < 4; i++)
+                    for (int i = 0; i < 4; i++)
                     {
                         Vector2 newNodeLocation  = new Vector2(nodeList[nextListTarget].nodeLocation.X, nodeList[nextListTarget].nodeLocation.Y);
                         if (i == 0 && newNodeLocation.Y > 0) newNodeLocation.Y--; //North
@@ -352,7 +412,7 @@ namespace PrototypeCoopSim.Events
                             else
                             {
                                 //if they are occupied - see if the person occupying the space can move
-                                if (associatedMap.getOccupyingElement(newNodeLocation).GetMovable())
+                                if (associatedMap.getOccupyingElement(newNodeLocation).GetMovable() && !associatedMap.getOccupyingElement(newNodeLocation).Idle() && !associatedMap.getOccupyingElement(newNodeLocation).GetStuck())
                                 {                                    
                                     //at this point it is safe to assume this is a usable node and add it to the list
                                     MapNode nodeToAdd;

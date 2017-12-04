@@ -36,7 +36,7 @@ namespace PrototypeCoopSim.Managers
                 {
                     if (eventList[i].IsActive())
                     {
-                        eventList[i].RunEvent(this);
+                       eventList[i].RunEvent(this);
                     }
                     //check for orphaned events
                     /*

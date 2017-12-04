@@ -12,6 +12,8 @@ namespace PrototypeCoopSim.Events
     class EventGenerateWorld : Event
     {
         int numberTrees;
+        int treeCycles;
+        int treeSpread;
         int numberRocks;
         bool treesCreated;
         bool rocksCreated;
@@ -19,10 +21,12 @@ namespace PrototypeCoopSim.Events
         mapManager associatedMap;
         Game associatedGame;
 
-        public EventGenerateWorld(Game gameIn, mapManager mapIn, int numberTreesIn, int numberRocksIn)
+        public EventGenerateWorld(Game gameIn, mapManager mapIn, int numberTreesIn, int treeCyclesIn, int treeSpreadIn, int numberRocksIn)
         {
             this.SetEventName("Generate World");
             numberTrees = numberTreesIn;
+            treeCycles = treeCyclesIn;
+            treeSpread = treeSpreadIn;
             numberRocks = numberRocksIn;
             treesCreated = false;
             rocksCreated = false;
@@ -34,7 +38,7 @@ namespace PrototypeCoopSim.Events
         {
             if (!treesCreated)
             {
-                Event treeEvent = new EventAddTrees(associatedGame, associatedMap, numberTrees);
+                Event treeEvent = new EventAddTrees(associatedGame, associatedMap, numberTrees, treeCycles, treeSpread);
                 callingEventManager.AddEvent(treeEvent);
                 this.Suspend(treeEvent);
                 treesCreated = true;

@@ -24,6 +24,7 @@ namespace PrototypeCoopSim.Objects
         private float speed = 1.0f;
         private bool movable;
         private bool moving;
+        private bool stuck;
         EventMoveTo associatedMovementEvent;
 
         //Status information
@@ -40,6 +41,7 @@ namespace PrototypeCoopSim.Objects
             worldPositionY = worldPositionYIn;
             animationOffset = new Vector2(0.0f, 0.0f);
             moving = false;
+            stuck = false;
             idle = true;
             associatedMovementEvent = null;
             lastStatusUpdate = "";
@@ -60,6 +62,10 @@ namespace PrototypeCoopSim.Objects
             if (this.Moving())
             {
                 detailString = detailString + Environment.NewLine + "(" + "Moving" + ")";
+            }
+            if (this.GetStuck())
+            {
+                detailString = detailString + Environment.NewLine + "(" + "Stuck" + ")";
             }
             return detailString;
         }
@@ -87,6 +93,16 @@ namespace PrototypeCoopSim.Objects
         public bool GetMovable()
         {
             return movable;
+        }
+
+        public void SetStuck(bool state)
+        {
+            stuck = state;
+        }
+
+        public bool GetStuck()
+        {
+            return stuck;
         }
 
         public void SetSpeed(float speedIn)
@@ -120,10 +136,10 @@ namespace PrototypeCoopSim.Objects
         {
             if (moving)
             {
-                idle = true;
+                idle = true;                
                 moving = false;
                 associatedMovementEvent.ShutdownSmoothly();
-            }
+            }           
         }
 
         public void ReplaceLinkedMovement(EventMoveTo newMovementEvent)
