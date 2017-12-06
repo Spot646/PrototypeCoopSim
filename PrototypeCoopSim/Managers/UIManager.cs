@@ -28,6 +28,7 @@ namespace PrototypeCoopSim.Managers
         private Texture2D focus2;
         private Texture2D focus3;
         private Texture2D harvestIcon;
+        private Texture2D mineIcon;
         private Texture2D iconFocus;
 
         //Fonts
@@ -45,6 +46,9 @@ namespace PrototypeCoopSim.Managers
         private int harvestIconX;
         private int harvestIconY;
         private int harvestIconDiameter;
+        private int mineIconX;
+        private int mineIconY;
+        private int mineIconDiameter;
 
         public UIManager(Game gameIn, Renderer rendererIn, GraphicsDevice gDeviceIn)
         {
@@ -62,6 +66,7 @@ namespace PrototypeCoopSim.Managers
             focus2 = associatedGame.Content.Load<Texture2D>("Focus2");
             focus3 = associatedGame.Content.Load<Texture2D>("Focus3");
             harvestIcon = associatedGame.Content.Load<Texture2D>("HarvestTreesIcon");
+            mineIcon = associatedGame.Content.Load<Texture2D>("HarvestRocksIcon");
             iconFocus = associatedGame.Content.Load<Texture2D>("CircleIconHeighlight");
 
             //Load fonts
@@ -97,6 +102,10 @@ namespace PrototypeCoopSim.Managers
             harvestIconX = (int)subUIWindowOrigin.X + 40;
             harvestIconY = (int)subUIWindowOrigin.Y + 40;
             harvestIconDiameter = 50;
+
+            mineIconX = (int)subUIWindowOrigin.X + 40;
+            mineIconY = (int)subUIWindowOrigin.Y + 100;
+            mineIconDiameter = 50;
         }
 
         public void DrawConsole()
@@ -143,12 +152,24 @@ namespace PrototypeCoopSim.Managers
             if (focusElement.GetIconTypes() == 1)
             {
                 associatedRenderer.drawTexturedRectangle(harvestIconX - (harvestIconDiameter / 2), harvestIconY - (harvestIconDiameter / 2), harvestIconDiameter, harvestIconDiameter, harvestIcon);
+                associatedRenderer.drawTexturedRectangle(mineIconX - (mineIconDiameter / 2), mineIconY - (mineIconDiameter / 2), mineIconDiameter, mineIconDiameter, mineIcon);
                 //check for focus
-                if(this.OverHarvestIcon(inputManager))
+                if (this.OverHarvestIcon(inputManager))
                 {
                     associatedRenderer.drawTexturedRectangle(harvestIconX - (harvestIconDiameter / 2), harvestIconY - (harvestIconDiameter / 2), harvestIconDiameter, harvestIconDiameter, iconFocus);
+                    associatedRenderer.drawTexturedRectangle(mineIconX - (mineIconDiameter / 2), mineIconY - (mineIconDiameter / 2), mineIconDiameter, mineIconDiameter, iconFocus);
                 }
             }
+            //Mine icon
+            //if (focusElement.GetIconTypes() == 2)
+            //{
+            //    associatedRenderer.drawTexturedRectangle(mineIconX - (mineIconDiameter / 2), mineIconY - (mineIconDiameter / 2), mineIconDiameter, mineIconDiameter, mineIcon);
+            //    //check for focus
+            //    if (this.OverMineIcon(inputManager))
+            //    {
+            //        associatedRenderer.drawTexturedRectangle(mineIconX - (mineIconDiameter / 2), mineIconY - (mineIconDiameter / 2), mineIconDiameter, mineIconDiameter, iconFocus);
+            //    }
+            //}
         }
 
        public bool OverHarvestIcon(InputManager inputManager)
@@ -163,6 +184,17 @@ namespace PrototypeCoopSim.Managers
             }
         }
 
+        public bool OverMineIcon(InputManager inputManager)
+        {
+            if (inputManager.MouseOverCircle(new Vector2(mineIconX, mineIconY), mineIconDiameter / 2))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public void DrawCurrentDrag(Vector2 startOfDragTile, Vector2 endOfDragTile)
         {

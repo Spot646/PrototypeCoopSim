@@ -144,6 +144,16 @@ namespace PrototypeCoopSim
                         }
                     }
                 }
+                else if (uiManager.OverMineIcon(inputManager) && elementFocus.Count > 0)
+                {
+                    for (int i = 0; i < elementFocus.Count; i++)
+                    {
+                        if (elementFocus[i].GetMovable())
+                        {
+                            eventManager.AddEvent(new EventHarvestRocks(this, currentMap, eventManager, elementFocus[i], gameTime, true));
+                        }
+                    }
+                }
                 else
                 {
                     elementFocus.Clear();

@@ -42,8 +42,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\EventHarvestRocks.cs" />
     <Compile Include="Events\EventHarvestTrees.cs" />
-    <Compile Include="Events\EventMineRocks.cs" />
     <Compile Include="Events\EventAddRocks.cs" />
     <Compile Include="Events\EventAddTrees.cs" />
     <Compile Include="Events\EventGenerateWorld.cs" />
@@ -55,6 +55,7 @@
     <Compile Include="Managers\UIManager.cs" />
     <Compile Include="Objects\gameElement.cs" />
     <Compile Include="Objects\RockElement.cs" />
+    <Compile Include="Objects\rockResourceElement.cs" />
     <Compile Include="Objects\woodResourceElement.cs" />
     <Compile Include="Objects\treeElement.cs" />
     <Compile Include="Objects\WorkerElement.cs" />
