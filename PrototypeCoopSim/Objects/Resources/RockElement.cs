@@ -8,7 +8,7 @@ using PrototypeCoopSim.Settings;
 
 namespace PrototypeCoopSim.Objects
 {
-    class RockElement : gameElement
+    class RockElement : ResourceElement
     {
         public Texture2D texture;
 

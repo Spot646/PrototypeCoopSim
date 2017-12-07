@@ -29,6 +29,7 @@ namespace PrototypeCoopSim.Managers
 
         //Map type 1
         public Texture2D groundTexture; //Ground Texture
+        public Texture2D testTreeTexture; //Ground Texture
         //Drawing information
         RenderTarget2D waterRenderTarget1;
         RenderTarget2D waterRenderTarget2;
@@ -45,20 +46,13 @@ namespace PrototypeCoopSim.Managers
             numberTiles = tilesXIn * tilesYIn;
             associatedGame = game;
             //Rendering information
-            waterRenderTarget1 = new RenderTarget2D(
-                game.GraphicsDevice,
-                game.GraphicsDevice.PresentationParameters.BackBufferWidth,
-                game.GraphicsDevice.PresentationParameters.BackBufferHeight,
-                false,
-                SurfaceFormat.Color,
-                DepthFormat.Depth24);
-            waterRenderTarget2 = new RenderTarget2D(
-                game.GraphicsDevice,
-                game.GraphicsDevice.PresentationParameters.BackBufferWidth,
-                game.GraphicsDevice.PresentationParameters.BackBufferHeight,
-                false,
-                SurfaceFormat.Color,
-                DepthFormat.Depth24);
+            //waterRenderTarget1 = new RenderTarget2D(
+            //    game.GraphicsDevice,
+            //    game.GraphicsDevice.PresentationParameters.BackBufferWidth,
+            //    game.GraphicsDevice.PresentationParameters.BackBufferHeight,
+            //    false,
+            //    SurfaceFormat.Color,
+            //    DepthFormat.Depth24);
             waterEffect = game.Content.Load<Effect>("FX/Water");
 
             passable = new bool[numberTiles];
@@ -80,7 +74,8 @@ namespace PrototypeCoopSim.Managers
             }
 
             occupyingElement = new gameElement[numberTiles];
-            groundTexture = game.Content.Load<Texture2D>("Browntile");
+            groundTexture = game.Content.Load<Texture2D>("Grassv2");
+            testTreeTexture = game.Content.Load<Texture2D>("Treev2");
         }
 
         public Vector2 getTileFromMousePosition(int mouseX, int mouseY, int tileWidth, int mapOriginX, int mapOriginY, int mapWindowSizeX, int mapWindowSizeY)
@@ -374,6 +369,9 @@ namespace PrototypeCoopSim.Managers
                     }
                 }
             }
+
+            //TEST
+            renderer.drawTexturedRectangle(300, 300, GlobalVariables.TILE_SIZE * 3, GlobalVariables.TILE_SIZE * 3, testTreeTexture);
 
             //Draw water pass 2
             //renderer.endDrawing();

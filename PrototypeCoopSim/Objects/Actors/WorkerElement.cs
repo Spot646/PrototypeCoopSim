@@ -8,7 +8,7 @@ using PrototypeCoopSim.Settings;
 
 namespace PrototypeCoopSim.Objects
 {
-    class WorkerElement : gameElement
+    class WorkerElement : ActorElement
     {
         public Texture2D texture;
 
@@ -17,7 +17,6 @@ namespace PrototypeCoopSim.Objects
             elementName = "Worker(Sven)";
             maxHealth = 300;
             currentHealth = 300;
-            yield = 0;
             this.SetSpeed(0.05f);
             this.SetMovable(true);
             texture = game.Content.Load<Texture2D>("TestCharSprite");

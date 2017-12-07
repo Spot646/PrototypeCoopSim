@@ -11,7 +11,7 @@ using PrototypeCoopSim.Settings;
 
 namespace PrototypeCoopSim.Objects
 {
-    class WaterElement: gameElement
+    class WaterElement: ResourceElement
     {
         public Texture2D texture;
         public Texture2D texture2;
@@ -23,6 +23,14 @@ namespace PrototypeCoopSim.Objects
         Effect waterNormalMap;
         mapManager associatedMap;
         Game associatedGame;
+        int normalOrigin1X;
+        int normalOrigin1Y;
+        int normalOrigin2X;
+        int normalOrigin2Y;
+        Rectangle sourceRectangle;
+        Rectangle sourceRectangle2;
+        Color[] data = new Color[GlobalVariables.TILE_SIZE * GlobalVariables.TILE_SIZE];
+        Color[] data2 = new Color[GlobalVariables.TILE_SIZE * GlobalVariables.TILE_SIZE];
 
         public WaterElement(Game game, int worldPositionXIn, int worldPositionYIn, mapManager mapManagerIn) : base(game, worldPositionXIn, worldPositionYIn)
         {
@@ -37,6 +45,8 @@ namespace PrototypeCoopSim.Objects
 
             //generate normal maps
             normalSource = game.Content.Load<Texture2D>("waterNormalv2");
+            normalMap1 = new Texture2D(associatedGame.GraphicsDevice, GlobalVariables.TILE_SIZE, GlobalVariables.TILE_SIZE);
+            normalMap2 = new Texture2D(associatedGame.GraphicsDevice, GlobalVariables.TILE_SIZE, GlobalVariables.TILE_SIZE);
 
             //generate underwater tile
             Texture2D waterFloorTemp = game.Content.Load<Texture2D>("UnderwaterV1.0");
@@ -66,8 +76,6 @@ namespace PrototypeCoopSim.Objects
             //Find proper atlas position
             int atlasX = 0;
             int atlasY = 0;
-            int atlasWidth = 32;
-            int atlasHeight = 32;
 
             int numberNorth = 0;
             int numberSouth = 0;
@@ -117,23 +125,19 @@ namespace PrototypeCoopSim.Objects
             //Generate the texture
             //Convert normal map
             //Find the world position of top left
-            int normalOrigin1X = ((this.getWorldPositionX() * GlobalVariables.TILE_SIZE) + (int)this.GetAnimationOffset().X) % (normalSource.Width / 2);
-            int normalOrigin1Y = (this.getWorldPositionY() * GlobalVariables.TILE_SIZE) % (normalSource.Height / 2);
-            int normalOrigin2X = (this.getWorldPositionX() * GlobalVariables.TILE_SIZE) % (normalSource.Width / 2);
-            int normalOrigin2Y = ((this.getWorldPositionY()  * GlobalVariables.TILE_SIZE) + (int)this.GetAnimationOffset().Y) % (normalSource.Height / 2);
+            normalOrigin1X = ((this.getWorldPositionX() * GlobalVariables.TILE_SIZE) + (int)this.GetAnimationOffset().X) % (normalSource.Width / 2);
+            normalOrigin1Y = (this.getWorldPositionY() * GlobalVariables.TILE_SIZE) % (normalSource.Height / 2);
+            normalOrigin2X = (this.getWorldPositionX() * GlobalVariables.TILE_SIZE) % (normalSource.Width / 2);
+            normalOrigin2Y = ((this.getWorldPositionY()  * GlobalVariables.TILE_SIZE) + (int)this.GetAnimationOffset().Y) % (normalSource.Height / 2);
 
             //generate normal map 1
-            Rectangle sourceRectangle = new Rectangle(normalOrigin1X, normalOrigin1Y, GlobalVariables.TILE_SIZE, GlobalVariables.TILE_SIZE);
-            normalMap1 = new Texture2D(associatedGame.GraphicsDevice, sourceRectangle.Width, sourceRectangle.Height);
-            Color[] data = new Color[sourceRectangle.Width * sourceRectangle.Height];
+            sourceRectangle = new Rectangle(normalOrigin1X, normalOrigin1Y, GlobalVariables.TILE_SIZE, GlobalVariables.TILE_SIZE);
             normalSource.GetData(0, sourceRectangle, data, 0, data.Length);
             normalMap1.SetData(data);
 
             //generate normal map 2
             //check for overflow on origin.x for first normal map
-            Rectangle sourceRectangle2 = new Rectangle(normalOrigin2X, normalOrigin2Y, GlobalVariables.TILE_SIZE, GlobalVariables.TILE_SIZE);
-            normalMap2 = new Texture2D(associatedGame.GraphicsDevice, sourceRectangle2.Width, sourceRectangle2.Height);
-            Color[] data2 = new Color[sourceRectangle2.Width * sourceRectangle2.Height];
+            sourceRectangle2 = new Rectangle(normalOrigin2X, normalOrigin2Y, GlobalVariables.TILE_SIZE, GlobalVariables.TILE_SIZE);
             normalSource.GetData(0, sourceRectangle2, data2, 0, data2.Length);
             normalMap2.SetData(data2);
 

@@ -171,17 +171,19 @@ namespace PrototypeCoopSim
                 {
                     if (elementFocus[i].GetMovable())
                     {
+                        //This is an actor
+                        ActorElement currentActor = (ActorElement)elementFocus[i];
                         //clear any previous stuck condition
-                        elementFocus[i].SetStuck(false);
+                        currentActor.SetStuck(false);
                         EventMoveTo movingEvent = new EventMoveTo(this, currentMap, elementFocus[i], inputManager.GetCurrentMouseTile(currentMap), gameTime);
-                        if (elementFocus[i].Moving())
+                        if (currentActor.Moving())
                         {
-                            elementFocus[i].ReplaceLinkedMovement(movingEvent);
+                            currentActor.ReplaceLinkedMovement(movingEvent);
                             eventManager.AddEvent(movingEvent);
                         }
                         else
                         {
-                            elementFocus[i].LinkToMoveEvent(movingEvent);
+                            currentActor.LinkToMoveEvent(movingEvent);
                             eventManager.AddEvent(movingEvent);
                         }
                     }

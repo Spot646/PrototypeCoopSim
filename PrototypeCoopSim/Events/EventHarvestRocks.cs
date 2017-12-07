@@ -15,7 +15,7 @@ namespace PrototypeCoopSim.Events
         private Game associatedGame;
         private EventManager associatedEventManager;
         private mapManager associatedMap;
-        private gameElement focusElement;
+        private ActorElement focusElement;
         private GameTime gameTime;
 
         //flags
@@ -37,7 +37,7 @@ namespace PrototypeCoopSim.Events
             associatedEventManager = eventManagerIn;
             associatedMap = mapIn;
             gameTime = gameTimeIn;
-            focusElement = focusElementIn;
+            focusElement = (ActorElement)focusElementIn;
             retryCounter = 0;
             rockLocation = new Vector2(-1, -1);
             nextToRock = false;

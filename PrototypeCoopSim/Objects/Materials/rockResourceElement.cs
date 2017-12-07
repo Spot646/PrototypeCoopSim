@@ -8,7 +8,7 @@ using PrototypeCoopSim.Settings;
 
 namespace PrototypeCoopSim.Objects
 {
-    class rockResourceElement : gameElement
+    class rockResourceElement : MaterialElement
     {
         public Texture2D texture;
 
@@ -17,8 +17,8 @@ namespace PrototypeCoopSim.Objects
             elementName = "Rock Pile";
             maxHealth = 0;
             currentHealth = 0;
-            yield = rockElementIn.yield;
-            this.SetMovable(false);
+            this.amount = rockElementIn.yield;
+            this.SetMovable(true);
             texture = game.Content.Load<Texture2D>("rock pile");
         }
 

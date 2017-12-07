@@ -18,7 +18,7 @@ namespace PrototypeCoopSim.Events
         //Related classes
         private mapManager associatedMap;
         private Game associatedGame;
-        private gameElement elementToMove;
+        private ActorElement elementToMove;
         private EventManager callingEventManager;
 
         //Target
@@ -55,7 +55,7 @@ namespace PrototypeCoopSim.Events
             this.SetEventName("Move To");
             associatedMap = mapIn;
             associatedGame = gameIn;
-            elementToMove = elementToMoveIn;
+            elementToMove = (ActorElement)elementToMoveIn;
             destination = destinationIn;
             gameTime = gameTimeIn;
             pathFound = false;
@@ -221,7 +221,6 @@ namespace PrototypeCoopSim.Events
                 {
                     if (associatedMap.getOccupyingElement(new Vector2(currentPath[1].X, currentPath[1].Y)).GetMovable())
                     {
-                        bool attemptPush = false;
                         if (elementToMove.GetStuck())
                         {
                             //already stuck, stop movement
@@ -348,7 +347,7 @@ namespace PrototypeCoopSim.Events
                 //check to see if my end target is populated already, and if I should shift my target
                 if (associatedMap.getOccupied(this.destination))
                 {
-                    if(associatedMap.getOccupyingElement(this.destination).Idle() || associatedMap.getOccupyingElement(this.destination).GetStuck())
+                    if(associatedMap.getOccupyingElement(this.destination).Idle() || (associatedMap.getOccupyingElement(this.destination).GetStuck()))
                     {
                         this.destination = associatedMap.FindNearest(originalDestination, "Empty");
                     }
