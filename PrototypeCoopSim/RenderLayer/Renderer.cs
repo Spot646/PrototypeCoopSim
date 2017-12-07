@@ -34,9 +34,29 @@ namespace PrototypeCoopSim.RenderLayer
             game.GraphicsDevice.Clear(Color.WhiteSmoke);
         }
 
+        public void switchRenderTarget(Game gameIn, RenderTarget2D renderTarget)
+        {
+            gameIn.GraphicsDevice.SetRenderTarget(renderTarget);
+        }
+
+        public void resetRenderTarget(Game gameIn)
+        {
+            gameIn.GraphicsDevice.SetRenderTarget(null);
+        }
+
         public void startDrawing()
         {
             spriteBatch.Begin();
+        }
+
+        public void startShadedDrawing(Effect effectIn)
+        {
+            spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effectIn);
+        }
+
+        public void startRenderTargetDrawing(Effect effectIn)
+        {
+            spriteBatch.Begin(0, BlendState.NonPremultiplied, null, null, null, effectIn);
         }
 
         public void endDrawing()
@@ -47,6 +67,16 @@ namespace PrototypeCoopSim.RenderLayer
         public void drawTexturedRectangle(int posX, int posY, int length, int width, Texture2D texture)
         {
             spriteBatch.Draw(texture, new Rectangle(posX, posY, length, width), Color.White);
+        }
+
+        public void drawTexturedRenderTarget(int posX, int posY, int length, int width, Texture2D texture)
+        {
+            spriteBatch.Draw(texture, new Rectangle(posX, posY, length, width), Color.White);
+        }
+
+        public void drawPartialTexturedRectangle(int posX, int posY, int length, int width, int atlasPosX, int atlasPosY, int atlasWidth, int atlasHeight, Texture2D texture)
+        {
+            spriteBatch.Draw(texture, new Rectangle(posX, posY, length, width), new Rectangle(atlasPosX, atlasPosY, atlasWidth, atlasHeight), Color.White);
         }
 
         public void drawText(String text, int posX, int posY, SpriteFont font)

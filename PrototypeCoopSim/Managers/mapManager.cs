@@ -25,10 +25,15 @@ namespace PrototypeCoopSim.Managers
         int[] groundType;
         bool[] occupied;
         gameElement[] occupyingElement;
+        Game associatedGame;
 
         //Map type 1
         public Texture2D groundTexture; //Ground Texture
-        
+        //Drawing information
+        RenderTarget2D waterRenderTarget1;
+        RenderTarget2D waterRenderTarget2;
+        Effect waterEffect;
+
         public mapManager(Game game, int tilesXIn, int tilesYIn)
         {
             sizeX = tilesXIn;
@@ -38,6 +43,23 @@ namespace PrototypeCoopSim.Managers
             time = 0;
             date = 0;
             numberTiles = tilesXIn * tilesYIn;
+            associatedGame = game;
+            //Rendering information
+            waterRenderTarget1 = new RenderTarget2D(
+                game.GraphicsDevice,
+                game.GraphicsDevice.PresentationParameters.BackBufferWidth,
+                game.GraphicsDevice.PresentationParameters.BackBufferHeight,
+                false,
+                SurfaceFormat.Color,
+                DepthFormat.Depth24);
+            waterRenderTarget2 = new RenderTarget2D(
+                game.GraphicsDevice,
+                game.GraphicsDevice.PresentationParameters.BackBufferWidth,
+                game.GraphicsDevice.PresentationParameters.BackBufferHeight,
+                false,
+                SurfaceFormat.Color,
+                DepthFormat.Depth24);
+            waterEffect = game.Content.Load<Effect>("FX/Water");
 
             passable = new bool[numberTiles];
             for(int i = 0; i < numberTiles; i++)
@@ -86,6 +108,32 @@ namespace PrototypeCoopSim.Managers
         public bool getOccupied(Vector2 focusTile)
         {
             return occupied[(int)focusTile.X + ((int)focusTile.Y * sizeX)];
+        }
+
+        public bool checkOccupied(Vector2 focusTile, String elementName)
+        {
+            if (this.TilePositionInBounds(focusTile))
+            {
+                if (this.getOccupied(focusTile))
+                {
+                    if (this.getOccupyingElement(focusTile).GetElementName() == elementName)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public int getNumberTilesX()
@@ -278,6 +326,41 @@ namespace PrototypeCoopSim.Managers
             }
         }
 
+        public void drawWater(Renderer renderer, Vector2 waterOffsetIn)
+        {
+            //Draw water
+            //Draw the base
+            for (int i = 0; i < numberTiles; i++)
+            {
+                if (occupied[i])
+                {
+                    if (occupyingElement[i].GetElementName() == "Water")
+                    {
+                        occupyingElement[i].SetAnimationOffset(waterOffsetIn);
+                        occupyingElement[i].draw(renderer);
+                    }
+                }
+            }
+        }
+
+        public void drawWaterLedge(Renderer renderer)
+        {
+            //Draw water
+            //Draw the base
+            WaterElement reference;
+            for (int i = 0; i < numberTiles; i++)
+            {
+                if (occupied[i])
+                {
+                    if (occupyingElement[i].GetElementName() == "Water")
+                    {
+                        reference = (WaterElement)occupyingElement[i];
+                        reference.DrawLedge(renderer);
+                    }
+                }
+            }
+        }
+
         public void draw(Renderer renderer)
         {
             //Draw map base
@@ -285,16 +368,30 @@ namespace PrototypeCoopSim.Managers
             {
                 for (int mapUnitHeight = 0; mapUnitHeight < sizeY; mapUnitHeight++)
                 {
-                    renderer.drawTexturedRectangle(0 + (mapUnitWidth * GlobalVariables.TILE_SIZE), 0 + (mapUnitHeight * GlobalVariables.TILE_SIZE), GlobalVariables.TILE_SIZE, GlobalVariables.TILE_SIZE, groundTexture);
+                    if (!this.checkOccupied(new Vector2(mapUnitWidth, mapUnitHeight),"Water"))
+                    {
+                        renderer.drawTexturedRectangle(0 + (mapUnitWidth * GlobalVariables.TILE_SIZE), 0 + (mapUnitHeight * GlobalVariables.TILE_SIZE), GlobalVariables.TILE_SIZE, GlobalVariables.TILE_SIZE, groundTexture);
+                    }
                 }
             }
+
+            //Draw water pass 2
+            //renderer.endDrawing();
+            //waterEffect.CurrentTechnique = waterEffect.Techniques["SpriteDrawingVerticalBlur"];
+            //renderer.startRenderTargetDrawing(waterEffect);
+            //renderer.drawTexturedRectangle(0, 0, associatedGame.GraphicsDevice.PresentationParameters.BackBufferWidth, associatedGame.GraphicsDevice.PresentationParameters.BackBufferHeight, waterRenderTarget2);
+            //renderer.endDrawing();
+            //renderer.startDrawing();
 
             //Draw objects
             for (int i = 0; i < numberTiles; i++)
             {
                 if (occupied[i])
                 {
-                    occupyingElement[i].draw(renderer);
+                    if (occupyingElement[i].GetElementName() != "Water")
+                    {
+                        occupyingElement[i].draw(renderer);
+                    }
                 }
             }
         }

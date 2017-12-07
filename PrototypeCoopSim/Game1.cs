@@ -7,6 +7,7 @@ using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.RenderLayer;
 using PrototypeCoopSim.Managers;
 using System.Collections.Generic;
+using PrototypeCoopSim.Settings;
 
 namespace PrototypeCoopSim
 {
@@ -20,6 +21,7 @@ namespace PrototypeCoopSim
         //Map
         const int mapTilesX = 24;
         const int mapTilesY = 24;
+        Vector2 waterOffset;
         mapManager currentMap;
 
         //Events
@@ -61,7 +63,7 @@ namespace PrototypeCoopSim
 
             //Screen settings
             renderer.setScreenSize(graphics, 1024, 768);
-            
+
             this.IsMouseVisible = true;
 
             //Setup Map
@@ -86,11 +88,12 @@ namespace PrototypeCoopSim
             currentMap.setOccupyingElement(new Vector2((int)currentMap.getNumberTilesX() / 2 + 1, (int)currentMap.getNumberTilesY() / 2), new WorkerElement(this, (int)currentMap.getNumberTilesX() / 2 + 1, (int)currentMap.getNumberTilesY() / 2));
             currentMap.setOccupied(new Vector2((int)currentMap.getNumberTilesX() / 2 - 1, (int)currentMap.getNumberTilesY() / 2), true);
             currentMap.setOccupyingElement(new Vector2((int)currentMap.getNumberTilesX() / 2 - 1, (int)currentMap.getNumberTilesY() / 2), new WorkerElement(this, (int)currentMap.getNumberTilesX() / 2 - 1, (int)currentMap.getNumberTilesY() / 2));
-
+            
             //Variable initialization
             //////////////////////////////////////////////////////////////
             //Generate map
             eventManager.AddEvent(new EventGenerateWorld(this, currentMap, 4, 90, 3, 5));
+            waterOffset = new Vector2(0, 0);
 
             base.Initialize();
         }
@@ -176,11 +179,12 @@ namespace PrototypeCoopSim
 
                 if(elementFocus.Count == 0)
                 {
-                    //if no focus, spawn new workers to test with
+                    //if no focus, spawn elements to test with
                     if (!currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap)))
                     {
                         currentMap.setOccupied(inputManager.GetCurrentMouseTile(currentMap), true);
-                        currentMap.setOccupyingElement(inputManager.GetCurrentMouseTile(currentMap), new WorkerElement(this, (int)inputManager.GetCurrentMouseTile(currentMap).X, (int)inputManager.GetCurrentMouseTile(currentMap).Y));
+                        //currentMap.setOccupyingElement(inputManager.GetCurrentMouseTile(currentMap), new WorkerElement(this, (int)inputManager.GetCurrentMouseTile(currentMap).X, (int)inputManager.GetCurrentMouseTile(currentMap).Y));
+                        currentMap.setOccupyingElement(inputManager.GetCurrentMouseTile(currentMap), new WaterElement(this, (int)inputManager.GetCurrentMouseTile(currentMap).X, (int)inputManager.GetCurrentMouseTile(currentMap).Y, currentMap));
                     }
                 }
             }
@@ -212,7 +216,14 @@ namespace PrototypeCoopSim
             }
 
             //Draw map
+            //find water offset    
+            waterOffset.X += gameTime.ElapsedGameTime.Milliseconds * 0.01f;
+            waterOffset.Y += gameTime.ElapsedGameTime.Milliseconds * 0.02f;
+            //if (waterOffset.X > 256.0f) waterOffset.X -= 256.0f - (float)GlobalVariables.TILE_SIZE;
+            //if (waterOffset.Y > 256.0f) waterOffset.Y -= 256.0f - (float)GlobalVariables.TILE_SIZE;
+            currentMap.drawWater(renderer, waterOffset);
             currentMap.draw(renderer);
+            currentMap.drawWaterLedge(renderer);
 
             //Drag drawing
             if (inputManager.DragStarted())

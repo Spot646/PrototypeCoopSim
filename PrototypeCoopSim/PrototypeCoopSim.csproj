@@ -53,6 +53,7 @@
     <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Managers\mapManager.cs" />
     <Compile Include="Managers\UIManager.cs" />
+    <Compile Include="Objects\WaterElement.cs" />
     <Compile Include="Objects\gameElement.cs" />
     <Compile Include="Objects\RockElement.cs" />
     <Compile Include="Objects\woodResourceElement.cs" />
@@ -77,6 +78,7 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.config" />
     <None Include="app.manifest" />
+    <None Include="Shaders\Water.dgsl" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

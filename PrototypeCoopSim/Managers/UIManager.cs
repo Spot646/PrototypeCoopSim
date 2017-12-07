@@ -21,14 +21,16 @@ namespace PrototypeCoopSim.Managers
 
         //Assets
         //Textures
-        private Texture2D plainWhite;
-        private Texture2D plainBlack;
-        private Texture2D plainGreen;
+        private Texture2D blankTexture;
         private Texture2D focus;
         private Texture2D focus2;
         private Texture2D focus3;
         private Texture2D harvestIcon;
         private Texture2D iconFocus;
+        //Effects
+        private Effect FlatBlack;
+        private Effect FlatWhite;
+        private Effect FlatGreen;
 
         //Fonts
         private SpriteFont consoleFont;
@@ -55,14 +57,16 @@ namespace PrototypeCoopSim.Managers
             currentConsoleText = " ";
 
             //Load textures
-            plainBlack = associatedGame.Content.Load<Texture2D>("PlainBlack");
-            plainWhite = associatedGame.Content.Load<Texture2D>("PlainWhite");
-            plainGreen = associatedGame.Content.Load<Texture2D>("PlainGreen");
+            blankTexture = associatedGame.Content.Load<Texture2D>("BlankTexture");
             focus = associatedGame.Content.Load<Texture2D>("Focus");
             focus2 = associatedGame.Content.Load<Texture2D>("Focus2");
             focus3 = associatedGame.Content.Load<Texture2D>("Focus3");
             harvestIcon = associatedGame.Content.Load<Texture2D>("HarvestTreesIcon");
             iconFocus = associatedGame.Content.Load<Texture2D>("CircleIconHeighlight");
+            //Load Effects
+            FlatBlack = associatedGame.Content.Load<Effect>("FX/BlackShader");
+            FlatWhite = associatedGame.Content.Load<Effect>("FX/WhiteShader");
+            FlatGreen = associatedGame.Content.Load<Effect>("FX/GreenShader");
 
             //Load fonts
             consoleFont = associatedGame.Content.Load<SpriteFont>("ConsoleText");
@@ -101,15 +105,21 @@ namespace PrototypeCoopSim.Managers
 
         public void DrawConsole()
         {
-            //Main window border
-            associatedRenderer.drawTexturedRectangle((int)mainUIWindowOrigin.X, (int)mainUIWindowOrigin.Y, mainUIWindowLengthX, mainUIWindowLengthY, plainBlack);
-            //Main window
-            associatedRenderer.drawTexturedRectangle((int)mainUIWindowOrigin.X + 5, (int)mainUIWindowOrigin.Y + 5, mainUIWindowLengthX - 10, mainUIWindowLengthY - 10, plainWhite);
-            //Sub window border
-            associatedRenderer.drawTexturedRectangle((int)subUIWindowOrigin.X, (int)subUIWindowOrigin.Y, subUIWindowLengthX, subUIWindowLengthY, plainBlack);
-            //sub window
-            associatedRenderer.drawTexturedRectangle((int)subUIWindowOrigin.X + 5, (int)subUIWindowOrigin.Y + 5, subUIWindowLengthX - 10, subUIWindowLengthY - 10, plainWhite);
+            //Draw borders
+            associatedRenderer.endDrawing(); // end current drawing as one should be going on
+            associatedRenderer.startShadedDrawing(FlatBlack);
+            associatedRenderer.drawTexturedRectangle((int)mainUIWindowOrigin.X, (int)mainUIWindowOrigin.Y, mainUIWindowLengthX, mainUIWindowLengthY, blankTexture);
+            associatedRenderer.drawTexturedRectangle((int)subUIWindowOrigin.X, (int)subUIWindowOrigin.Y, subUIWindowLengthX, subUIWindowLengthY, blankTexture);
+
+            //Draw main output areas
+            associatedRenderer.endDrawing();
+            associatedRenderer.startShadedDrawing(FlatWhite);
+            associatedRenderer.drawTexturedRectangle((int)mainUIWindowOrigin.X + 5, (int)mainUIWindowOrigin.Y + 5, mainUIWindowLengthX - 10, mainUIWindowLengthY - 10, blankTexture);
+            associatedRenderer.drawTexturedRectangle((int)subUIWindowOrigin.X + 5, (int)subUIWindowOrigin.Y + 5, subUIWindowLengthX - 10, subUIWindowLengthY - 10, blankTexture);
+
             //console text
+            associatedRenderer.endDrawing();
+            associatedRenderer.startDrawing();
             associatedRenderer.drawText(currentConsoleText, (int)mainUIWindowOrigin.X + 10, (int)mainUIWindowOrigin.Y + 10, consoleFont);
         }
 
@@ -195,15 +205,18 @@ namespace PrototypeCoopSim.Managers
             //Find length Y
             lengthY = Math.Abs((int)(startOfDragTile.Y - endOfDragTile.Y)) * GlobalVariables.TILE_SIZE + GlobalVariables.TILE_SIZE;
 
-
+            associatedRenderer.endDrawing(); // end current drawing as one should be going on
+            associatedRenderer.startShadedDrawing(FlatGreen);
             //Top
-            associatedRenderer.drawTexturedRectangle(topLeftX,topLeftY,lengthX,3,plainGreen);
+            associatedRenderer.drawTexturedRectangle(topLeftX,topLeftY,lengthX,3, blankTexture);
             //Left
-            associatedRenderer.drawTexturedRectangle(topLeftX, topLeftY , 3, lengthY, plainGreen);
+            associatedRenderer.drawTexturedRectangle(topLeftX, topLeftY , 3, lengthY, blankTexture);
             //Bottom
-            associatedRenderer.drawTexturedRectangle(topLeftX, topLeftY + lengthY - 3, lengthX, 3, plainGreen);
+            associatedRenderer.drawTexturedRectangle(topLeftX, topLeftY + lengthY - 3, lengthX, 3, blankTexture);
             //Right
-            associatedRenderer.drawTexturedRectangle(topLeftX + lengthX - 3, topLeftY, 3, lengthY, plainGreen);
+            associatedRenderer.drawTexturedRectangle(topLeftX + lengthX - 3, topLeftY, 3, lengthY, blankTexture);
+            associatedRenderer.endDrawing();
+            associatedRenderer.startDrawing();
         }
     }
 }
