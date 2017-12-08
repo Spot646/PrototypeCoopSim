@@ -140,7 +140,7 @@ namespace PrototypeCoopSim.Events
                             this.SetComplete();
                         }
                     }
-                    //if's likely someone else has chopped it down already
+                    //it's likely someone else has chopped it down already
                     else
                     {
                         if (repeating)
