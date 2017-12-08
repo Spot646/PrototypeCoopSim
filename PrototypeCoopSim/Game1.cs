@@ -94,7 +94,7 @@ namespace PrototypeCoopSim
             //Variable initialization
             //////////////////////////////////////////////////////////////
             //Generate map
-            eventManager.AddEvent(new EventGenerateWorld(this, currentMap, 4, 90, 3, 5));
+            eventManager.AddEvent(new EventGenerateWorld(this, currentMap, 4, 90, 3, 10));
             waterOffset = new Vector2(0, 0);
 
             base.Initialize();

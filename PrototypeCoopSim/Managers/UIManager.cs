@@ -158,16 +158,18 @@ namespace PrototypeCoopSim.Managers
             {
                 
             }
-            //Harvest icon
+            // Icons
             if (focusElement.GetIconTypes() == 1)
             {
                 associatedRenderer.drawTexturedRectangle(harvestIconX - (harvestIconDiameter / 2), harvestIconY - (harvestIconDiameter / 2), harvestIconDiameter, harvestIconDiameter, harvestIcon);
                 associatedRenderer.drawTexturedRectangle(mineIconX - (mineIconDiameter / 2), mineIconY - (mineIconDiameter / 2), mineIconDiameter, mineIconDiameter, mineIcon);
                 //check for focus
+                //Harvest icon
                 if (this.OverHarvestIcon(inputManager))
                 {
                     associatedRenderer.drawTexturedRectangle(harvestIconX - (harvestIconDiameter / 2), harvestIconY - (harvestIconDiameter / 2), harvestIconDiameter, harvestIconDiameter, iconFocus);                    
                 }
+                //Mining icon
                 if (this.OverMineIcon(inputManager))
                 {
                     associatedRenderer.drawTexturedRectangle(mineIconX - (mineIconDiameter / 2), mineIconY - (mineIconDiameter / 2), mineIconDiameter, mineIconDiameter, iconFocus);

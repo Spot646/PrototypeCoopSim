@@ -24,7 +24,7 @@ namespace PrototypeCoopSim.Objects
 
         public override int UpdateCurrentHealth(int damage)
         {
-            damage = 25;
+            //damage = 25;
             return base.UpdateCurrentHealth(damage);
         }
 
