@@ -6,8 +6,10 @@ using PrototypeCoopSim.Events;
 using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.RenderLayer;
 using PrototypeCoopSim.Managers;
+using PrototypeCoopSim.AIProfiles;
 using System.Collections.Generic;
 using PrototypeCoopSim.Settings;
+using PrototypeCoopSim.AIProfiles.Jobs;
 
 namespace PrototypeCoopSim
 {
@@ -139,10 +141,11 @@ namespace PrototypeCoopSim
                 }
                 else if (uiManager.OverHarvestIcon(inputManager) && elementFocus.Count > 0)
                 {
-                    for(int i = 0; i < elementFocus.Count; i++)
+                    for (int i = 0; i < elementFocus.Count; i++)
                     {
                         if (elementFocus[i].GetMovable())
                         {
+                            ((ActorElement)elementFocus[i]).SetJob(new GathererJob());
                             eventManager.AddEvent(new EventHarvestTrees(this, currentMap, eventManager, elementFocus[i], gameTime, true));
                         }
                     }
@@ -167,7 +170,7 @@ namespace PrototypeCoopSim
             if (inputManager.RightMouseButtonReleased())
             {
                 //cycle through all focuses
-                for(int i = 0; i < elementFocus.Count; i++)
+                for (int i = 0; i < elementFocus.Count; i++)
                 {
                     if (elementFocus[i].GetMovable())
                     {
@@ -189,7 +192,7 @@ namespace PrototypeCoopSim
                     }
                 }
 
-                if(elementFocus.Count == 0)
+                if (elementFocus.Count == 0)
                 {
                     //if no focus, spawn elements to test with
                     if (!currentMap.getOccupied(inputManager.GetCurrentMouseTile(currentMap)))
@@ -198,6 +201,16 @@ namespace PrototypeCoopSim
                         //currentMap.setOccupyingElement(inputManager.GetCurrentMouseTile(currentMap), new WorkerElement(this, (int)inputManager.GetCurrentMouseTile(currentMap).X, (int)inputManager.GetCurrentMouseTile(currentMap).Y));
                         currentMap.setOccupyingElement(inputManager.GetCurrentMouseTile(currentMap), new WaterElement(this, (int)inputManager.GetCurrentMouseTile(currentMap).X, (int)inputManager.GetCurrentMouseTile(currentMap).Y, currentMap));
                     }
+                }
+            }
+
+            //Process jobs
+            //TODO make run for everyone
+            if (elementFocus.Count > 0)
+            {
+                if (elementFocus[0].HasJob())
+                {
+                    ((ActorElement)elementFocus[0]).getJob().ProcessJobPriorities(this, currentMap, eventManager, elementFocus[0], gameTime);
                 }
             }
 

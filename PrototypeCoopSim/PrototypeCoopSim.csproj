@@ -41,6 +41,12 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AIProfiles\Job.cs" />
+    <Compile Include="AIProfiles\Jobs\GathererJob.cs" />
+    <Compile Include="AIProfiles\Priorities\PriorityCutMarkedTrees.cs" />
+    <Compile Include="AIProfiles\Priority.cs" />
+    <Compile Include="AIProfiles\PriorityCondition.cs" />
+    <Compile Include="AIProfiles\PriorityList.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\EventHarvestRocks.cs" />
     <Compile Include="Events\EventHarvestTrees.cs" />

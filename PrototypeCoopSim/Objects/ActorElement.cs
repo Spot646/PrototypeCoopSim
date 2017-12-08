@@ -6,6 +6,7 @@ using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.Events;
 using PrototypeCoopSim.RenderLayer;
 using PrototypeCoopSim.Settings;
+using PrototypeCoopSim.AIProfiles;
 
 namespace PrototypeCoopSim.Objects
 {
@@ -17,6 +18,7 @@ namespace PrototypeCoopSim.Objects
         private bool stuck;
         bool idle;
         EventMoveTo associatedMovementEvent;
+        Job currentJob;
 
         public ActorElement(Game game, int worldPositionXIn, int worldPositionYIn) : base(game, worldPositionXIn, worldPositionYIn)
         {
@@ -25,6 +27,19 @@ namespace PrototypeCoopSim.Objects
             stuck = false;
             idle = true;
             associatedMovementEvent = null;
+            currentJob = new Job();
+        }
+
+        public void SetJob(Job newJob)
+        {
+            currentJob = new Job();
+            currentJob.CompilePriorities();
+            this.hasJob = true;
+        }
+
+        public Job getJob()
+        {
+            return currentJob;
         }
 
         public override String getDetails()

@@ -19,6 +19,7 @@ namespace PrototypeCoopSim.Objects
         public int worldPositionX;
         public int worldPositionY;
         public bool movable;
+        public bool hasJob;
 
         //Status information
         public String lastStatusUpdate;
@@ -34,6 +35,7 @@ namespace PrototypeCoopSim.Objects
             worldPositionY = worldPositionYIn;
             animationOffset = new Vector2(0.0f, 0.0f);
             lastStatusUpdate = "";
+            hasJob = false;
         }
 
         public virtual String getDetails()
@@ -49,6 +51,11 @@ namespace PrototypeCoopSim.Objects
         public int getWorldPositionY()
         {
             return worldPositionY;
+        }
+
+        public bool HasJob()
+        {
+            return hasJob;
         }
 
         public Vector2 getWorldPositionVector()
