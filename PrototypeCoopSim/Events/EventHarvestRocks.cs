@@ -129,9 +129,9 @@ namespace PrototypeCoopSim.Events
                     retryCounter = 0;
                     if(associatedMap.getOccupyingElement(rockLocation).GetElementName() == "Rock")
                     {
-                        associatedMap.getOccupyingElement(rockLocation).UpdateCurrentHealth(1);
+                        associatedMap.getOccupyingElement(rockLocation).UpdateCurrentHealth(5);
                         if(associatedMap.getOccupyingElement(rockLocation).currentHealth <= 0){
-                            //Rock is out of HP - generate the logs
+                            //Rock is out of HP - generate the rock pile
                             associatedMap.setOccupyingElement(rockLocation, new rockResourceElement(associatedGame, (int)rockLocation.X, (int)rockLocation.Y, (RockElement)associatedMap.getOccupyingElement(rockLocation)));
                             if (repeating)
                             {
@@ -140,7 +140,7 @@ namespace PrototypeCoopSim.Events
                             this.SetComplete();
                         }
                     }
-                    //it's likely someone else has chopped it down already
+                    //it's likely someone else has mined it down already
                     else
                     {
                         if (repeating)
