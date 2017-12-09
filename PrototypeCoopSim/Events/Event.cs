@@ -5,6 +5,7 @@ using System;
 using PrototypeCoopSim.Events;
 using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.RenderLayer;
+using PrototypeCoopSim.Objects;
 using PrototypeCoopSim.Managers;
 
 namespace PrototypeCoopSim.Events
@@ -17,6 +18,8 @@ namespace PrototypeCoopSim.Events
         bool completed = false;
         bool shutdownSmoothly = false;
         private bool active = true;
+
+        ActorElement actorToWake = null; 
 
         public Event (){
             
@@ -32,6 +35,27 @@ namespace PrototypeCoopSim.Events
             active = false;
             suspendEvent = completionEventIn;
             completionEventIn.setCallingEvent(this);
+        }
+
+        public void WakeAssociated(){
+            if(actorToWake != null)
+            {
+                actorToWake.SetIdle(true);
+            }
+        }
+
+        public bool SetAssociated(ActorElement associatedActorIn)
+        {
+            if (associatedActorIn.Idle())
+            {
+                associatedActorIn.SetIdle(false);
+                actorToWake = associatedActorIn;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void SetSuspendUntilEvent(Event suspendEventIn)

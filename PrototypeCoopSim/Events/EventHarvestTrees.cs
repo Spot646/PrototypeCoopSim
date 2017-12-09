@@ -23,10 +23,6 @@ namespace PrototypeCoopSim.Events
         bool repeating;
         bool seekingTree;
 
-        //counters
-        public int retryCounter;
-        private const int retryAttempts = 5;
-
         //Info
         Vector2 treeLocation;
 
@@ -38,7 +34,6 @@ namespace PrototypeCoopSim.Events
             associatedMap = mapIn;
             gameTime = gameTimeIn;
             focusElement = (ActorElement)focusElementIn;
-            retryCounter = 0;
             treeLocation = new Vector2(-1, -1);
             nextToTree = false;
             seekingTree = false;
@@ -48,51 +43,37 @@ namespace PrototypeCoopSim.Events
         {
             if (!nextToTree)
             {
-                if (seekingTree){
-                    retryCounter++;
+                if (seekingTree)
+                {
                     focusElement.SetStatusMessage("Couldn't get to a tree");
-                    //keep a retry counter and retry up to 5 times
-                    if(retryCounter < retryAttempts)
-                    {
-                        EventHarvestTrees retryEvent = new EventHarvestTrees(associatedGame, associatedMap, associatedEventManager, focusElement, gameTime, repeating);
-                        retryEvent.retryCounter = retryCounter;
-                        callingEventManager.AddEvent(retryEvent);
-                    }
                     //reset on success
                     seekingTree = false;
                     this.SetComplete();
                 }
-                //check if next to tree
-                Vector2 testLocation = new Vector2(-1, -1);
-                for (int i = 0; i < 4; i++)
+                else
                 {
-                    if (i == 0)  {testLocation = new Vector2(focusElement.getWorldPositionX() + 1, focusElement.getWorldPositionY()); }
-                    if (i == 1) { testLocation = new Vector2(focusElement.getWorldPositionX() - 1, focusElement.getWorldPositionY()); }
-                    if (i == 2) { testLocation = new Vector2(focusElement.getWorldPositionX() , focusElement.getWorldPositionY() + 1); }
-                    if (i == 3) { testLocation = new Vector2(focusElement.getWorldPositionX() , focusElement.getWorldPositionY() - 1); }
-
-                    if (associatedMap.TilePositionInBounds(testLocation))
+                    //check if next to tree
+                    Vector2 testLocation = new Vector2(-1, -1);
+                    for (int i = 0; i < 4; i++)
                     {
-                        if (associatedMap.getOccupied(testLocation))
+                        if (i == 0) { testLocation = new Vector2(focusElement.getWorldPositionX() + 1, focusElement.getWorldPositionY()); }
+                        if (i == 1) { testLocation = new Vector2(focusElement.getWorldPositionX() - 1, focusElement.getWorldPositionY()); }
+                        if (i == 2) { testLocation = new Vector2(focusElement.getWorldPositionX(), focusElement.getWorldPositionY() + 1); }
+                        if (i == 3) { testLocation = new Vector2(focusElement.getWorldPositionX(), focusElement.getWorldPositionY() - 1); }
+
+                        if (associatedMap.checkOccupied(testLocation, "Tree"))
                         {
-                            if(associatedMap.getOccupyingElement(testLocation).GetElementName() == "Tree")
-                            {
-                                nextToTree = true;
-                                i = 4;
-                            }
+                            nextToTree = true;
+                            treeLocation.X = testLocation.X;
+                            treeLocation.Y = testLocation.Y;
                         }
                     }
                 }
-                if (nextToTree)
-                {
-                    treeLocation.X = testLocation.X;
-                    treeLocation.Y = testLocation.Y;
-                }
                 //if not, find tree
-                else
-                {
+                if (!nextToTree)
+                { 
                     seekingTree = true;
-                    Vector2 treeToTarget = associatedMap.FindNearest(focusElement.getWorldPositionVector(), "Tree");
+                    Vector2 treeToTarget = associatedMap.FindNearestPathable(focusElement.getWorldPositionVector(), "Tree", true);
                     //check if a real tree was found
                     if (treeToTarget.X == -1 && treeToTarget.Y == -1)
                     {
@@ -114,41 +95,36 @@ namespace PrototypeCoopSim.Events
                             focusElement.LinkToMoveEvent(movingEvent);
                             associatedEventManager.AddEvent(movingEvent);
                             this.Suspend(movingEvent);
-                        }                        
+                        }
                     }
                 }
-            }
-            if (nextToTree)
+            }                
+            else
             {
                 focusElement.SetStatusMessage("Getting ready to harvest tree");
                 //hit tree
                 if (associatedMap.getOccupied(treeLocation))
                 {
                     //success, reset retry counter
-                    retryCounter = 0;
-                    if(associatedMap.getOccupyingElement(treeLocation).GetElementName() == "Tree")
+                    if (associatedMap.getOccupyingElement(treeLocation).GetElementName() == "Tree")
                     {
                         associatedMap.getOccupyingElement(treeLocation).UpdateCurrentHealth(1);
-                        if(associatedMap.getOccupyingElement(treeLocation).currentHealth <= 0){
+                        if (associatedMap.getOccupyingElement(treeLocation).currentHealth <= 0)
+                        {
                             //Tree is out of HP - generate the logs
                             associatedMap.setOccupyingElement(treeLocation, new woodResourceElement(associatedGame, (int)treeLocation.X, (int)treeLocation.Y, (treeElement)associatedMap.getOccupyingElement(treeLocation)));
-                            if (repeating)
-                            {
-                                associatedEventManager.AddEvent(new EventHarvestTrees(associatedGame, associatedMap, associatedEventManager, focusElement, gameTime, true));
-                            }
                             this.SetComplete();
                         }
                     }
-                    //it's likely someone else has chopped it down already
                     else
                     {
-                        if (repeating)
-                        {
-                            associatedEventManager.AddEvent(new EventHarvestTrees(associatedGame, associatedMap, associatedEventManager, focusElement, gameTime, true));
-                        }
+                        this.SetComplete();
                     }
                 }
-                //this.SetComplete();
+                else
+                {
+                    this.SetComplete();
+                }
             }       
         }
     }

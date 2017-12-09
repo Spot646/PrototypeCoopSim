@@ -32,12 +32,12 @@ namespace PrototypeCoopSim.Objects
 
         public void SetJob(Job newJob)
         {
-            currentJob = new Job();
+            currentJob = newJob;
             currentJob.CompilePriorities();
             this.hasJob = true;
         }
 
-        public Job getJob()
+        public Job GetJob()
         {
             return currentJob;
         }
@@ -47,8 +47,10 @@ namespace PrototypeCoopSim.Objects
             String detailString;
             detailString = "Name:" + elementName + Environment.NewLine
                          + "Location: " + (worldPositionX + 1) + "," + (worldPositionY + 1) + Environment.NewLine
+                         + "Job:" + currentJob.jobName + Environment.NewLine
                          + "Health: " + currentHealth + "/" + maxHealth + Environment.NewLine + Environment.NewLine
                          + "Status: " + lastStatusUpdate;
+
             if (this.Idle())
             {
                 detailString = detailString + Environment.NewLine + "(" + "Idle" + ")";
@@ -94,10 +96,14 @@ namespace PrototypeCoopSim.Objects
             return idle;
         }
 
+        public void SetIdle(bool state)
+        {
+            idle = state;
+        }
+
         public void LinkToMoveEvent(EventMoveTo linkedMovement)
         {
             moving = true;
-            idle = false;
             associatedMovementEvent = linkedMovement;
         }
 
@@ -105,7 +111,6 @@ namespace PrototypeCoopSim.Objects
         {
             if (moving)
             {
-                idle = true;
                 moving = false;
                 associatedMovementEvent.ShutdownSmoothly();
             }
@@ -115,7 +120,6 @@ namespace PrototypeCoopSim.Objects
         {
             if (moving)
             {
-                idle = true;
                 moving = false;
                 newMovementEvent.Suspend(associatedMovementEvent);
                 associatedMovementEvent.ShutdownSmoothly();

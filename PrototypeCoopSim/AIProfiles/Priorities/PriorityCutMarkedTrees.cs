@@ -22,7 +22,9 @@ namespace PrototypeCoopSim.AIProfiles.Priorities
         {            
             if (PriorityCondition.MarkedTreesExist())
             {
-                eventManagerIn.AddEvent(new EventHarvestTrees(gameIn, mapIn, eventManagerIn, focusElementIn, gameTimeIn, false));
+                Event newEvent = new EventHarvestTrees(gameIn, mapIn, eventManagerIn, focusElementIn, gameTimeIn, false);
+                newEvent.SetAssociated((ActorElement)focusElementIn);
+                eventManagerIn.AddEvent(newEvent);                
                 return true;
             }
             else

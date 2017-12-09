@@ -146,7 +146,6 @@ namespace PrototypeCoopSim
                         if (elementFocus[i].GetMovable())
                         {
                             ((ActorElement)elementFocus[i]).SetJob(new GathererJob());
-                            eventManager.AddEvent(new EventHarvestTrees(this, currentMap, eventManager, elementFocus[i], gameTime, true));
                         }
                     }
                 }
@@ -208,9 +207,10 @@ namespace PrototypeCoopSim
             //TODO make run for everyone
             if (elementFocus.Count > 0)
             {
-                if (elementFocus[0].HasJob())
+                if (elementFocus[0].HasJob() && elementFocus[0].Idle())
                 {
-                    ((ActorElement)elementFocus[0]).getJob().ProcessJobPriorities(this, currentMap, eventManager, elementFocus[0], gameTime);
+                    ((ActorElement)elementFocus[0]).SetIdle(true);
+                    ((ActorElement)elementFocus[0]).GetJob().ProcessJobPriorities(this, currentMap, eventManager, elementFocus[0], gameTime);
                 }
             }
 

@@ -12,7 +12,7 @@ namespace PrototypeCoopSim.AIProfiles.Jobs
     {
         public GathererJob()
         {
-            this.jobName = "Gatherer";
+            base.jobName = "Gatherer";
         }
 
         public override void CompilePriorities()

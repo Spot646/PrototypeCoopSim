@@ -19,7 +19,7 @@ namespace PrototypeCoopSim.Objects
             currentHealth = 250;
             yield = 25;
             this.SetMovable(false);
-            texture = game.Content.Load<Texture2D>("rock1");
+            texture = game.Content.Load<Texture2D>("RockResourceV2");
         }
 
         public override int UpdateCurrentHealth(int damage)

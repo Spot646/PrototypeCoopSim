@@ -408,25 +408,6 @@ namespace PrototypeCoopSim.Events
                                     i = 4; //exit for loop
                                 }
                             }
-                            else
-                            {
-                                //if they are occupied - see if the person occupying the space can move
-                                if (associatedMap.getOccupyingElement(newNodeLocation).GetMovable() && !associatedMap.getOccupyingElement(newNodeLocation).Idle() && !associatedMap.getOccupyingElement(newNodeLocation).GetStuck())
-                                {                                    
-                                    //at this point it is safe to assume this is a usable node and add it to the list
-                                    MapNode nodeToAdd;
-                                    nodeToAdd.nodeLocation = newNodeLocation;
-                                    nodeToAdd.nodePreviousLocation = new Vector2(nodeList[nextListTarget].nodeLocation.X, nodeList[nextListTarget].nodeLocation.Y);
-                                    nodeList.Add(nodeToAdd);
-                                    //If this new point was our destination - complete this step
-                                    if (nodeToAdd.nodeLocation.Equals(destination))
-                                    {
-                                        elementToMove.SetStatusMessage("Found Path");
-                                        flowMapProduced = true; //start next step
-                                        i = 4; //exit for loop
-                                    }
-                                }
-                            }
                         }
                     }
                     //increment next list target for next cycle

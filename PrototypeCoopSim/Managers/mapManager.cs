@@ -35,6 +35,13 @@ namespace PrototypeCoopSim.Managers
         RenderTarget2D waterRenderTarget2;
         Effect waterEffect;
 
+        //Flow Map
+        struct MapNode
+        {
+            public Vector2 nodeLocation;
+            public Vector2 nodePreviousLocation;
+        }
+
         public mapManager(Game game, int tilesXIn, int tilesYIn)
         {
             sizeX = tilesXIn;
@@ -251,6 +258,74 @@ namespace PrototypeCoopSim.Managers
             }
 
             return target;
+        }
+
+        public Vector2 FindNearestPathable(Vector2 startOfSearch, String typeOfElement, bool nearestSpace)
+        {            
+            bool[,] checkedMap = new bool[this.getNumberTilesX(),this.getNumberTilesY()];
+            int nextListTarget;
+            List<MapNode> nodeList = new List<MapNode>();
+
+            //seed list
+            MapNode newNode;
+            newNode.nodeLocation = startOfSearch;
+            newNode.nodePreviousLocation = startOfSearch;
+
+            nodeList.Add(newNode);
+            nextListTarget = 0;
+            checkedMap[(int)startOfSearch.X, (int)startOfSearch.Y] = true;
+            //check to see if my end target is populated already, and if I should shift my target
+            if (this.checkOccupied(startOfSearch, typeOfElement))
+            {
+                return startOfSearch;
+            }
+            else
+            {
+                while (nextListTarget < nodeList.Count)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 newNodeLocation = new Vector2(nodeList[nextListTarget].nodeLocation.X, nodeList[nextListTarget].nodeLocation.Y);
+                        if (i == 0 && newNodeLocation.Y > 0) newNodeLocation.Y--; //North
+                        if (i == 1 && newNodeLocation.X < this.getNumberTilesX() - 1) newNodeLocation.X++; //East
+                        if (i == 2 && newNodeLocation.Y < this.getNumberTilesY() - 1) newNodeLocation.Y++; //South
+                        if (i == 3 && newNodeLocation.X > 0) newNodeLocation.X--; //West
+
+                        //if they are already checked - ignore
+                        if (checkedMap[(int)newNodeLocation.X, (int)newNodeLocation.Y] == false)
+                        {
+                            checkedMap[(int)newNodeLocation.X, (int)newNodeLocation.Y] = true;
+                            //if they are already occupied - ignore
+                            if (!this.getOccupied(newNodeLocation))
+                            {
+                                //at this point it is safe to assume this is a usable node and add it to the list
+                                MapNode nodeToAdd;
+                                nodeToAdd.nodeLocation = newNodeLocation;
+                                nodeToAdd.nodePreviousLocation = new Vector2(nodeList[nextListTarget].nodeLocation.X, nodeList[nextListTarget].nodeLocation.Y);
+                                nodeList.Add(nodeToAdd);
+                            }
+                            else
+                            {
+                                //If this new point was our destination - complete this step
+                                if (this.checkOccupied(newNodeLocation, typeOfElement))
+                                {
+                                    if (!nearestSpace)
+                                    {
+                                        return newNodeLocation;
+                                    }
+                                    else
+                                    {
+                                        return nodeList[nextListTarget].nodeLocation;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //increment next list target for next cycle
+                    nextListTarget++;
+                }
+                return new Vector2(-1, -1);
+            }
         }
 
         public void setPassable(Vector2 focusTile, bool state)
